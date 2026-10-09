@@ -51,3 +51,10 @@ Newest entries at the bottom. Rules:
   NVIDIA H100 80GB HBM3, 81,559 MiB, driver 615.71.09; torch 2.13.0+cu129 sees the GPU.
   Saved at `results/env/probe-13908530.txt`. Blocker B1 resolved; the `embers` probe
   13907139 was cancelled as redundant.
+- **`grpo` env built on PACE** (`~/ps-simpliearn-0/envs/grpo`, `logs/setup_env.log`
+  on PACE): torch 2.13.0+cu129, vllm 0.30.0+cu129, trl 1.14.2, transformers 5.17.0,
+  accelerate 1.15.0, peft 0.21.2, datasets 5.0.1, flashinfer-python 0.6.18.post1;
+  `pip check` reports no broken requirements. The vLLM wheel pulled transformers
+  5.19.0, which the next install step replaced with the 5.17.0 pin.
+- The model pre-download step was killed on the login node (likely a per-process
+  limit on login nodes). Retrying with a single download worker.
