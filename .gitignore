@@ -7,3 +7,4 @@ runs/
 data/raw/
 .DS_Store
 .pytest_cache/
+scratch/
