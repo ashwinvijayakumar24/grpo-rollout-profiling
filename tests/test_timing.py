@@ -287,3 +287,12 @@ def test_record_dict_has_every_bucket():
     d = t.end_step().to_dict()
     assert d["step"] == 7
     assert set(d["buckets"]) == set(BUCKETS)
+
+
+def test_abort_step_discards_the_open_step():
+    t = make(FakeGPU())
+    t.begin_step(3)
+    t.open("reward")
+    t.abort_step()
+    assert not t.in_step
+    t.begin_step(4)  # no error: the aborted step is gone
