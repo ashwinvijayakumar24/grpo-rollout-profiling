@@ -1,0 +1,32 @@
+---------------------------------------
+Begin Slurm Prolog: Oct-09-2026 00:35:41
+Job ID:    13908530
+User ID:   avijayakumar41
+Account:   paceship-simpliearn
+Job name:  grpo-probe
+Partition: gpu-h100
+QOS:       inferno
+---------------------------------------
+job 13908530 on atl1-1-03-008-32-0.pace.gatech.edu at 2026-10-09T00:35:41-04:00, qos=inferno partition=gpu-h100
+name, memory.total [MiB], driver_version
+NVIDIA H100 80GB HBM3, 81559 MiB, 615.71.09
+Fri Oct  9 00:35:41 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+torch 2.13.0+cu129 cuda 12.9 available True
+device NVIDIA H100 80GB HBM3 capability (9, 0)
+matmul ok True
+vllm import failed: ModuleNotFoundError("No module named 'vllm'")
+---------------------------------------
+Begin Slurm Epilog: Oct-09-2026 00:35:49
+Job ID:        13908530
+User ID:       avijayakumar41
+Account:       paceship-simpliearn
+Job name:      grpo-probe
+Resources:     cpu=2,gres/gpu:h100=1,mem=16G,node=1
+Rsrc Used:     cput=00:00:20,vmem=0,walltime=00:00:10,mem=1072284K,energy_used=0
+Partition:     gpu-h100
+QOS:           inferno
+Nodes:         atl1-1-03-008-32-0
+---------------------------------------

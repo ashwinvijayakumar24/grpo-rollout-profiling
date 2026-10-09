@@ -44,3 +44,10 @@ Newest entries at the bottom. Rules:
   0.30.0 cu129 wheel URL was confirmed to exist (545 MB). The `embers` probe
   13907139 sat in the queue for over an hour; a second probe 13908530 was
   submitted on `inferno`/`gpu-h100`.
+
+## 2026-10-09
+
+- **GPU probe result** (job 13908530, `inferno`/`gpu-h100`, node atl1-1-03-008-32-0):
+  NVIDIA H100 80GB HBM3, 81,559 MiB, driver 615.71.09; torch 2.13.0+cu129 sees the GPU.
+  Saved at `results/env/probe-13908530.txt`. Blocker B1 resolved; the `embers` probe
+  13907139 was cancelled as redundant.

@@ -210,3 +210,11 @@ its transformers pin is exact.
 4. **TRL internals move fast.** `_generate_single_turn` is a private method, and
    1.15.0 already changed `grpo_trainer.py` heavily. Pin exactly, and keep our
    override small and in one file.
+
+## Update 2026-10-09: risk 1 resolved
+
+Probe job 13908530 on `inferno`/`gpu-h100` measured an **NVIDIA H100 80GB HBM3 with
+driver 615.71.09** (`results/env/probe-13908530.txt`). That is above both the cu129
+minimum (575.51.03) and the CUDA 13 minimum (580), so the pin set above works. The
+`grpo` env's torch 2.13.0+cu129 sees the GPU and runs a matmul. With 80 GB, the full
+fine-tune of the 1.5B model is the baseline; LoRA is not needed for memory.
