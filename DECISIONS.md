@@ -193,7 +193,12 @@ its transformers pin is exact.
 
 1. **Driver too old for CUDA 13, or too old even for 12.9.** If the driver is below
    575, none of the pins above work, and every recent vLLM is ruled out. Mitigation:
-   run the `nvidia-smi` check before building anything.
+   run the `nvidia-smi` check before building anything. A login-node check
+   (2026-10-08) could not read the driver, because login nodes have no GPU driver
+   loaded. `sinfo` there does list `h100`, `h200`, `a100`, `l40s` and
+   `rtx_pro_6000_blackwell` GPU nodes. Blackwell support suggests a recent driver on
+   at least some nodes, but that is a guess, and nodes may differ. Record the driver
+   for the exact GPU type we pin.
 2. **Memory on one GPU for a full fine-tune.** The trainer (about 24 GB of weights
    and AdamW state for 1.5B, an estimate) plus vLLM's 0.3 share has to fit. It should
    fit on an 80 GB H100. On a 40 GB A100, use LoRA or Llama-3.2-1B. Sleep mode would
