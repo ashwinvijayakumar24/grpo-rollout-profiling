@@ -58,3 +58,10 @@ Newest entries at the bottom. Rules:
   5.19.0, which the next install step replaced with the 5.17.0 pin.
 - The model pre-download step was killed on the login node (likely a per-process
   limit on login nodes). Retrying with a single download worker.
+- **Model weights on PACE.** Two downloads of Qwen2.5-1.5B-Instruct on the login node
+  were killed partway. Downloaded on the Mac instead (revision
+  `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`) and copied with rsync in about 3 minutes;
+  the `model.safetensors` sha256 on PACE equals the Hub's LFS hash
+  (`dd924a11…c6d3ee`, 3,087,467,144 bytes).
+- **Smoke job 13909990 submitted** (`configs/experiments/smoke.yaml` on
+  `inferno`/`gpu-h100`): 8 vLLM steps with steps 5–6 profiled, plus 4 HF-generate steps.
