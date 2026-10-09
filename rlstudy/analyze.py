@@ -163,6 +163,13 @@ def analyze_experiment(exp_dir: Path, warmup: int = WARMUP_STEPS) -> dict[str, d
             continue
         header["run_dir"] = str(run_dir.relative_to(exp_dir.parent))
         summary = summarize_run(header, steps, warmup)
+        if (run_dir / "gpu_util.csv").exists():
+            from rlstudy.gpumon import nvml_by_span
+
+            kept = [s for s in steps if s["step"] >= warmup and not s.get("profiled")]
+            summary["nvml_util_by_span"] = nvml_by_span(run_dir / "gpu_util.csv", kept)
+        if (run_dir / "profile_busy.json").exists():
+            summary["profile_busy"] = json.loads((run_dir / "profile_busy.json").read_text())
         (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
         by_arm.setdefault(run_dir.parent, []).append(summary)
 

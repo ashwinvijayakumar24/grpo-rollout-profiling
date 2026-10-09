@@ -64,3 +64,15 @@ def test_sampler_is_noop_without_nvidia_gpu(tmp_path):
     s.stop()
     if not s.available:
         assert not (tmp_path / "gpu_util.csv").exists()
+
+
+def test_nvml_by_span(tmp_path):
+    from rlstudy.gpumon import nvml_by_span
+
+    p = tmp_path / "gpu_util.csv"
+    p.write_text("t_ns,util_gpu_pct,util_mem_pct,mem_used_mib,power_w,sm_clock_mhz\n"
+                 + "".join(f"{i * 100},{u},0,0,0,0\n" for i, u in enumerate([0, 100, 100, 0, 20, 40])))
+    steps = [{"events": [["rollout_gen", 100, 200], ["weight_sync", 300, 500]]}]
+    r = nvml_by_span(p, steps)
+    assert r["rollout_gen"] == {"mean_util_gpu_pct": 100.0, "samples": 2}
+    assert r["weight_sync"]["mean_util_gpu_pct"] == pytest.approx(20.0)

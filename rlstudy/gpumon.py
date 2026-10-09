@@ -168,3 +168,29 @@ def busy_fraction(events: list[dict], span_names: set[str] | None = None) -> dic
             "by_kind_s": dict(rec["by_kind_s"]),
         }
     return result
+
+
+def nvml_by_span(csv_path: Path, steps: list[dict], names: set[str] | None = None) -> dict[str, dict]:
+    """Mean NVML utilization of samples taken inside each span (inclusive times).
+
+    Coarse by construction (see NvmlSampler): use it for long spans like rollout_gen,
+    and the profiler's busy_fraction for short ones like weight_sync.
+    """
+    import bisect
+
+    rows = list(csv.DictReader(Path(csv_path).open()))
+    if not rows:
+        return {}
+    t = [int(r["t_ns"]) for r in rows]
+    util = [float(r["util_gpu_pct"]) for r in rows]
+    acc: dict[str, list[float]] = defaultdict(list)
+    for step in steps:
+        for name, start, end in step.get("events", []):
+            if names is not None and name not in names:
+                continue
+            lo, hi = bisect.bisect_left(t, start), bisect.bisect_right(t, end)
+            acc[name].extend(util[lo:hi])
+    return {
+        name: {"mean_util_gpu_pct": sum(v) / len(v), "samples": len(v)}
+        for name, v in acc.items() if v
+    }
