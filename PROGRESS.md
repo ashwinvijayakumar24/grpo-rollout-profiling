@@ -65,3 +65,13 @@ Newest entries at the bottom. Rules:
   (`dd924a11…c6d3ee`, 3,087,467,144 bytes).
 - **Smoke job 13909990 submitted** (`configs/experiments/smoke.yaml` on
   `inferno`/`gpu-h100`): 8 vLLM steps with steps 5–6 profiled, plus 4 HF-generate steps.
+- **Smoke job 13909990 failed: out of GPU memory** (node atl1-1-03-008-27-0, H100
+  80GB HBM3, driver 615.71.09, max SM clock 1980 MHz). Both arms hit
+  `torch.OutOfMemoryError` in the loss forward (`_compute_loss` →
+  `_full_logits_logps`), with 77.97 GiB already allocated by PyTorch. Cause: all 64
+  completions went through the training forward at once, so activations and
+  64 × (prompt + 256) × 151k-vocab logits were alive together. The HF arm failed too,
+  so vLLM's 0.3 memory share was not the cause.
+  Fix (commit after `62b009d`): micro-batches of 16 completions with gradient
+  accumulation, still one generation round per optimizer step. Logs:
+  `results/smoke/*/rep0.log` on PACE.
