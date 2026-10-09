@@ -38,7 +38,15 @@ from rlstudy.trace import TraceWriter
 
 
 class ProfiledGRPOTrainer(GRPOTrainer):
-    def __init__(self, *args, timer: StepTimer, trace: TraceWriter, sync_every: int = 1, **kwargs):
+    def __init__(
+        self,
+        *args,
+        timer: StepTimer,
+        trace: TraceWriter,
+        sync_every: int = 1,
+        profile_steps: tuple[int, int] | None = None,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         if sync_every < 1:
             raise ValueError("sync_every must be >= 1")
@@ -55,7 +63,7 @@ class ProfiledGRPOTrainer(GRPOTrainer):
         self._in_scoring = False
         self._step_stats: dict = {}
         self._wrap_backward()
-        self.add_callback(_TimingCallback(self))
+        self.add_callback(_TimingCallback(self, profile_steps))
 
     # ----- weight_sync + rollout_gen ---------------------------------------------
 
@@ -133,6 +141,16 @@ class ProfiledGRPOTrainer(GRPOTrainer):
 
         self.accelerator.backward = timed_backward
 
+    def on_profile_exported(self, trace_path) -> None:
+        """Reduce the (large) profiler trace to per-span GPU busy fractions."""
+        import json
+
+        from rlstudy.gpumon import busy_fraction, load_trace_events
+        from rlstudy.timing import BUCKETS, SUB_BUCKETS
+
+        busy = busy_fraction(load_trace_events(trace_path), set(BUCKETS) | set(SUB_BUCKETS))
+        (trace_path.parent / "profile_busy.json").write_text(json.dumps(busy, indent=2) + "\n")
+
     # ----- per-step metrics -----------------------------------------------------------
 
     def pop_step_metrics(self) -> dict:
@@ -167,10 +185,43 @@ class ProfiledGRPOTrainer(GRPOTrainer):
 
 
 class _TimingCallback(TrainerCallback):
-    def __init__(self, trainer: ProfiledGRPOTrainer):
+    """Opens and closes step windows, and runs an optional torch.profiler capture.
+
+    Steps ``profile_steps = (first, last)`` inclusive run under the profiler, with
+    every span annotated so it appears in the trace. Profiling slows those steps, so
+    their records carry ``profiled: true`` and the analysis excludes them from timing.
+    """
+
+    def __init__(self, trainer: ProfiledGRPOTrainer, profile_steps: tuple[int, int] | None):
         self.t = trainer
+        self.profile_steps = profile_steps
+        self._prof = None
+
+    def _maybe_start_profiler(self, next_step: int) -> None:
+        if self.profile_steps is None or next_step != self.profile_steps[0]:
+            return
+        import torch
+        from torch.profiler import ProfilerActivity, profile, record_function
+
+        activities = [ProfilerActivity.CPU]
+        if torch.cuda.is_available():
+            activities.append(ProfilerActivity.CUDA)
+        self._prof = profile(activities=activities)
+        self._prof.__enter__()
+        self.t.timer.annotate = record_function
+
+    def _maybe_stop_profiler(self, finished_step: int) -> None:
+        if self._prof is None or finished_step < self.profile_steps[1]:
+            return
+        self.t.timer.annotate = None
+        self._prof.__exit__(None, None, None)
+        out = self.t.trace.run_dir / "profile_trace.json.gz"
+        self._prof.export_chrome_trace(str(out))
+        self._prof = None
+        self.t.on_profile_exported(out)
 
     def on_train_begin(self, args, state, control, **kwargs):
+        self._maybe_start_profiler(state.global_step)
         self.t.timer.begin_step(state.global_step)
 
     def on_pre_optimizer_step(self, args, state, control, **kwargs):
@@ -180,10 +231,16 @@ class _TimingCallback(TrainerCallback):
         self.t.timer.close("optimizer_step")
 
     def on_step_end(self, args, state, control, **kwargs):
-        record = self.t.timer.end_step()
-        self.t.trace.write_step(record.to_dict(), self.t.pop_step_metrics())
+        record = self.t.timer.end_step().to_dict()
+        finished = state.global_step - 1
+        record["profiled"] = self._prof is not None
+        self.t.trace.write_step(record, self.t.pop_step_metrics())
+        self._maybe_stop_profiler(finished)
+        self._maybe_start_profiler(state.global_step)
         self.t.timer.begin_step(state.global_step)
 
     def on_train_end(self, args, state, control, **kwargs):
         # The last window holds only post-training teardown; it is not a step.
         self.t.timer.abort_step()
+        if self._prof is not None:  # training ended inside the profile window
+            self._maybe_stop_profiler(self.profile_steps[1])
