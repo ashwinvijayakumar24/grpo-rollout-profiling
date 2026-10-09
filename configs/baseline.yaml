@@ -11,7 +11,7 @@ lora:
 grpo:
   prompts_per_step: 8      # B
   num_generations: 8       # G -> 64 completions per step
-  micro_batch: 16          # completions per loss forward; 64 at once OOMs on an H100 80GB
+  micro_batch: 8           # completions per loss forward; 64 OOMs, 16 OOMs next to vLLM (PROGRESS.md)
   max_completion_length: 256
   temperature: 1.0
   learning_rate: 1.0e-6
@@ -20,7 +20,7 @@ grpo:
   gradient_checkpointing: false
 rollout:
   backend: vllm
-  gpu_memory_utilization: 0.3
+  gpu_memory_utilization: 0.15  # ~12 GB: weights ~3 GB + KV cache; 0.3 left no room for training
   sleep_mode: false
   sync_every: 1
 timing:
