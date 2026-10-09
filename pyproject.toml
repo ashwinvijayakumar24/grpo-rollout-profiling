@@ -1,0 +1,41 @@
+[project]
+name = "rlstudy"
+version = "0.1.0"
+description = "Profiling where GRPO training wall-clock time goes, with a focus on the rollout path"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pyyaml>=6.0",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# Training stack. Versions match DECISIONS.md. On PACE, torch and vllm come from
+# the cu129 wheels installed by scripts/setup_pace_env.sh, not from these lines.
+train = [
+    "torch==2.13.0",
+    "trl==1.14.2",
+    "transformers==5.17.0",
+    "accelerate==1.15.0",
+    "peft==0.21.2",
+    "datasets==5.0.1",
+]
+analysis = [
+    "matplotlib>=3.8",
+]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["rlstudy*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: needs a model download or a real training step",
+    "gpu: needs CUDA",
+]
