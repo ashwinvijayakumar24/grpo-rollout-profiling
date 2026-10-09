@@ -26,6 +26,7 @@ def run_dir(tmp_path_factory):
     config = load_config(None, [
         f"model={TINY}", "rollout.backend=hf", "grpo.max_steps=3", "grpo.prompts_per_step=2",
         "grpo.num_generations=4", "grpo.max_completion_length=8", "data.limit=8",
+        "grpo.micro_batch=4",
     ])
     return run(config, tmp_path_factory.mktemp("smoke") / "rep0")
 
@@ -47,9 +48,13 @@ def test_buckets_sum_to_total(run_dir):
 def test_hooked_stages_record_time(run_dir):
     _, steps = read_trace(run_dir)
     for s in steps:
-        for b in ("rollout_gen", "reward", "advantage_loss", "optimizer_step"):
+        for b in ("rollout_gen", "reward", "optimizer_step"):
             assert s["buckets"][b] > 0, (s["step"], b)
-            assert s["counts"][b] == 1
+            assert s["counts"][b] == 1  # once per optimizer step
+        # 8 completions / micro_batch 4 = 2 micro-steps, each a forward + backward.
+        assert s["counts"]["advantage_loss"] == 2
+        assert s["counts"]["loss_forward"] == 2
+        assert s["counts"]["backward"] == 2
         assert s["buckets"]["weight_sync"] == 0  # HF generate: no separate sampler
         assert s["sub_buckets"]["loss_forward"] > 0
         assert s["sub_buckets"]["backward"] > 0
@@ -64,6 +69,7 @@ def test_step_metrics(run_dir):
     assert m["weight_synced"] is None
     assert 0.0 <= m["zero_signal_group_frac"] <= 1.0
     assert "reward/correctness_reward" in m
+    assert m["micro_batches"] == 2
 
 
 def test_step_windows_cover_training_time(run_dir):

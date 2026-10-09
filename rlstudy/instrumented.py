@@ -21,10 +21,12 @@ windows tile the whole training run with no gaps. The batch fetch and logging th
 happen between ``on_step_end`` and the next step's work land in the next step's
 ``other``. The first window opens at ``on_train_begin``.
 
-Timing assumes the baseline shape ``gradient_accumulation_steps=1`` and
-``steps_per_generation=1``: one optimizer step = one generation round = one
-``training_step``. Other shapes still sum correctly, but generation then happens only
-on some steps, which the analysis has to account for.
+Timing assumes ``steps_per_generation == gradient_accumulation_steps`` and
+``num_iterations == 1``: one optimizer step = one generation round, trained in
+``gradient_accumulation_steps`` micro-batches. Generation, sync, rewards, and the
+old-log-prob pass happen inside the first micro-step's ``training_step``; every
+micro-step adds a loss forward and a backward. Spans accumulate across micro-steps
+(``counts`` records how many), so the per-step buckets are complete.
 """
 
 from __future__ import annotations
@@ -54,8 +56,9 @@ class ProfiledGRPOTrainer(GRPOTrainer):
             # Level-2 sleep discards vLLM's weights, so generate() re-pushes them every
             # round regardless of our schedule (NOTES.md section 2).
             raise ValueError("sync_every > 1 is meaningless with vllm_enable_sleep_mode=True")
-        if self.args.gradient_accumulation_steps != 1 or self.args.steps_per_generation != 1:
-            raise ValueError("profiling assumes gradient_accumulation_steps=1 and steps_per_generation=1")
+        if self.args.steps_per_generation != self.args.gradient_accumulation_steps or self.num_iterations != 1:
+            raise ValueError("profiling assumes one generation round per optimizer step: "
+                             "steps_per_generation == gradient_accumulation_steps and num_iterations == 1")
         self.timer = timer
         self.trace = trace
         self.sync_every = sync_every
@@ -128,7 +131,7 @@ class ProfiledGRPOTrainer(GRPOTrainer):
     def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
         with self.timer.span("loss_forward"):
             loss = super().compute_loss(model, inputs, return_outputs, num_items_in_batch)
-        self._step_stats["loss"] = loss.detach()
+        self._step_stats.setdefault("losses", []).append(loss.detach())
         return loss
 
     def _wrap_backward(self) -> None:
@@ -179,8 +182,10 @@ class ProfiledGRPOTrainer(GRPOTrainer):
             # Groups where every sample got the same reward have zero advantage and
             # contribute no gradient: generation work that taught the model nothing.
             m["zero_signal_group_frac"] = float((groups.std(dim=1) == 0).float().mean().item())
-        if "loss" in s:
-            m["loss"] = float(s["loss"].item())
+        if "losses" in s:
+            # Mean over micro-batches; each is already normalized by TRL's loss type.
+            m["loss"] = float(torch.stack(s["losses"]).float().mean().item())
+            m["micro_batches"] = len(s["losses"])
         return m
 
 

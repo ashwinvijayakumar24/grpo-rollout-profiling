@@ -28,6 +28,7 @@ DEFAULTS: dict = {
     "grpo": {
         "prompts_per_step": 8,        # B: distinct questions per optimizer step
         "num_generations": 8,         # G: samples per question
+        "micro_batch": 16,            # completions per loss forward/backward (memory bound)
         "max_completion_length": 256,
         "temperature": 1.0,
         "learning_rate": 1.0e-6,
@@ -86,6 +87,10 @@ def build_grpo_config(config: dict, out_dir: Path):
 
     g, r = config["grpo"], config["rollout"]
     completions_per_step = g["prompts_per_step"] * g["num_generations"]
+    micro = min(g["micro_batch"], completions_per_step)
+    if completions_per_step % micro:
+        raise ValueError(f"{completions_per_step} completions per step not divisible by micro_batch={micro}")
+    n_micro = completions_per_step // micro
     on_cuda = torch.cuda.is_available()
     bf16 = config["dtype"] == "bfloat16" and (on_cuda or torch.backends.mps.is_available())
     return GRPOConfig(
@@ -93,11 +98,13 @@ def build_grpo_config(config: dict, out_dir: Path):
         seed=config["seed"],
         max_steps=g["max_steps"],
         learning_rate=g["learning_rate"],
-        # TRL counts completions, not prompts. With steps_per_generation=1 the
-        # generation batch equals this batch: one generation round per step.
-        per_device_train_batch_size=completions_per_step,
-        gradient_accumulation_steps=1,
-        steps_per_generation=1,
+        # TRL counts completions, not prompts. One generation round of
+        # micro x n_micro completions per optimizer step, trained in n_micro slices
+        # with gradient accumulation (all 64 in one forward ran out of memory on an
+        # 80 GB H100: smoke job 13909990).
+        per_device_train_batch_size=micro,
+        gradient_accumulation_steps=n_micro,
+        steps_per_generation=n_micro,
         num_generations=g["num_generations"],
         max_completion_length=g["max_completion_length"],
         temperature=g["temperature"],

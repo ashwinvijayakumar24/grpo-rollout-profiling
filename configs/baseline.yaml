@@ -11,6 +11,7 @@ lora:
 grpo:
   prompts_per_step: 8      # B
   num_generations: 8       # G -> 64 completions per step
+  micro_batch: 16          # completions per loss forward; 64 at once OOMs on an H100 80GB
   max_completion_length: 256
   temperature: 1.0
   learning_rate: 1.0e-6
