@@ -1,0 +1,12 @@
+# First GPU job: proves the vLLM path end to end and measures step time, so the
+# budget for E1-E4 can be projected from a real number before submitting them.
+name: smoke
+base: configs/baseline.yaml
+reps: 1
+arms:
+  vllm:
+    grpo.max_steps: 8
+    timing.profile_steps: [5, 6]
+  hf_generate:
+    grpo.max_steps: 4
+    rollout.backend: hf

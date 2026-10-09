@@ -1,0 +1,14 @@
+# Weight-sync cost vs sync frequency. Sleep mode stays off (with it on, TRL re-pushes
+# weights every round regardless of schedule). 64 steps so even sync_every=16 gets
+# 3 syncs after warm-up. Profiled arms capture steps 32-33 (a sync step for all three
+# schedules) to measure GPU busy fraction during sync.
+name: E4_sync_freq
+base: configs/baseline.yaml
+reps: 3
+arms:
+  sync1:  {rollout.sync_every: 1,  grpo.max_steps: 64}
+  sync4:  {rollout.sync_every: 4,  grpo.max_steps: 64}
+  sync16: {rollout.sync_every: 16, grpo.max_steps: 64}
+profile_arms:
+  sync1_profiled:  {rollout.sync_every: 1,  grpo.max_steps: 40, timing.profile_steps: [32, 33]}
+  sync16_profiled: {rollout.sync_every: 16, grpo.max_steps: 40, timing.profile_steps: [32, 33]}

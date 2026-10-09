@@ -1,0 +1,11 @@
+# How much does the instrumentation itself slow a step? Same run with full timing
+# (syncs at every span boundary, events, NVML sampler) vs only step-boundary syncs.
+name: E0_overhead
+base: configs/baseline.yaml
+reps: 3
+arms:
+  timing_on: {}
+  timing_off:
+    timing.enabled: false
+    timing.record_events: false
+    timing.nvml_interval_s: null

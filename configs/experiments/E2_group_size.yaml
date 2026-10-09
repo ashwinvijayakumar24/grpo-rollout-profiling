@@ -1,0 +1,9 @@
+# Rollout throughput vs samples per prompt. B (prompts per step) is fixed at 8, so
+# completions per step are 32 / 64 / 128 and the training batch grows with G too.
+name: E2_group_size
+base: configs/baseline.yaml
+reps: 3
+arms:
+  G4:  {grpo.num_generations: 4}
+  G8:  {grpo.num_generations: 8}
+  G16: {grpo.num_generations: 16}

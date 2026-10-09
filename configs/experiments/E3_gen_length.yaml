@@ -1,0 +1,7 @@
+# Generation-length cap vs the rollout share of step time.
+name: E3_gen_length
+base: configs/baseline.yaml
+reps: 3
+arms:
+  len128: {grpo.max_completion_length: 128}
+  len512: {grpo.max_completion_length: 512}
