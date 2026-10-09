@@ -146,6 +146,12 @@ class StepTimer:
         self._step = None
         return record
 
+    def abort_step(self) -> None:
+        """Drop the open step without recording it (for example, teardown after training)."""
+        self._open = []
+        self._step = None
+        self._outside = {}
+
     @contextmanager
     def span(self, name: str):
         """Time a block and charge it to ``name`` (a bucket or a sub-bucket)."""
