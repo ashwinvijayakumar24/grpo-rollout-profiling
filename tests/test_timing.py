@@ -296,3 +296,50 @@ def test_abort_step_discards_the_open_step():
     t.abort_step()
     assert not t.in_step
     t.begin_step(4)  # no error: the aborted step is gone
+
+
+def test_events_record_inclusive_span_times():
+    gpu = FakeGPU()
+    t = make(gpu, record_events=True)
+    t.begin_step(0)
+    with t.span("advantage_loss"):
+        with t.span("weight_sync"):
+            gpu.cpu(0.5)
+        gpu.cpu(0.25)
+    r = t.end_step()
+    names = [e[0] for e in r.events]
+    assert names == ["weight_sync", "advantage_loss"]  # in close order
+    ws = r.events[0]
+    assert (ws[2] - ws[1]) / 1e9 == pytest.approx(0.5)
+    al = r.events[1]
+    assert (al[2] - al[1]) / 1e9 == pytest.approx(0.75)  # inclusive, unlike the bucket
+
+
+def test_events_off_by_default():
+    t = make(FakeGPU())
+    t.begin_step(0)
+    with t.span("reward"):
+        pass
+    assert t.end_step().events == []
+
+
+def test_annotate_wraps_each_span():
+    seen = []
+
+    class Ctx:
+        def __init__(self, name):
+            self.name = name
+
+        def __enter__(self):
+            seen.append(("enter", self.name))
+
+        def __exit__(self, *a):
+            seen.append(("exit", self.name))
+
+    t = make(FakeGPU(), annotate=Ctx)
+    t.begin_step(0)
+    with t.span("advantage_loss"):
+        with t.span("backward"):
+            pass
+    t.end_step()
+    assert seen == [("enter", "advantage_loss"), ("enter", "backward"), ("exit", "backward"), ("exit", "advantage_loss")]
