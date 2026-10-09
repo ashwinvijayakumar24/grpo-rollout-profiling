@@ -1,0 +1,11 @@
+# Where does a step's wall clock go at baseline settings? The 'profiled' arm is one
+# extra run whose steps 20-21 are captured with torch.profiler for per-stage GPU busy
+# fractions; it is kept separate so profiler overhead never touches the timing reps.
+name: E1_breakdown
+base: configs/baseline.yaml
+reps: 3
+arms:
+  baseline: {}
+profile_arms:
+  baseline_profiled:
+    timing.profile_steps: [20, 21]
