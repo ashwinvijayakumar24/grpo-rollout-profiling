@@ -1,7 +1,11 @@
 #!/bin/bash
 # Download model weights into the shared HF cache on the PACE login node.
-# Xet transfers are disabled: on 2026-10-09 the Xet path was killed / stalled on the
-# login node (see PROGRESS.md); plain HTTP with one worker is slower but reliable.
+# NOTE: on 2026-10-09 every attempt to fetch the 3.1 GB weight file on the login node
+# was killed partway (with and without Xet), most likely by login-node process limits.
+# What worked: download on a laptop, then
+#   rsync -a --copy-unsafe-links <HF_HOME>/hub/models--Qwen--Qwen2.5-1.5B-Instruct \
+#         pace:ps-simpliearn-0/.hf_cache/hub/
+# and verify the blob's sha256 equals its file name. Kept for small models.
 #   setsid nohup bash scripts/download_model.sh [MODEL_ID] > logs/download.log 2>&1 < /dev/null &
 set -euo pipefail
 MODEL=${1:-Qwen/Qwen2.5-1.5B-Instruct}
