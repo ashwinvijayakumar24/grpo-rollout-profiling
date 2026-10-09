@@ -75,3 +75,10 @@ Newest entries at the bottom. Rules:
   Fix (commit after `62b009d`): micro-batches of 16 completions with gradient
   accumulation, still one generation round per optimizer step. Logs:
   `results/smoke/*/rep0.log` on PACE.
+- **Smoke job 13918411** (git `fdde4eb`, node atl1-1-03-008-27-0, H100 80GB):
+  - `hf_generate` arm **completed**: first end-to-end instrumented run on the GPU.
+    Peak `torch.cuda.max_memory_allocated` 57,258,060,800 bytes
+    (`results/smoke/hf_generate/rep0/run.json` on PACE). Its 4-step timing is a
+    smoke check, not a result.
+  - `vllm` arm failed again with out-of-memory in the loss forward, with vLLM holding
+    its 0.3 share. Fix: `gpu_memory_utilization` 0.15 and `micro_batch` 8.
