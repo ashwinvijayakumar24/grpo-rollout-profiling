@@ -9,6 +9,8 @@ directory, and ``summary.md`` (a table per experiment) in the experiment directo
 
 Rules, applied identically to every run:
 
+- Steps run under torch.profiler (``profiled: true``) are dropped; the profiler
+  slows them down.
 - The first ``WARMUP_STEPS`` steps are dropped. They include CUDA graph capture,
   vLLM compilation warm-up, and allocator growth (NOTES.md pitfall 5).
 - A bucket's *share* is its summed time over the summed step time (a ratio of sums),
@@ -41,7 +43,7 @@ def _mean(xs: list[float]) -> float | None:
 
 
 def summarize_run(header: dict, steps: list[dict], warmup: int = WARMUP_STEPS) -> dict:
-    kept = [s for s in steps if s["step"] >= warmup]
+    kept = [s for s in steps if s["step"] >= warmup and not s.get("profiled")]
     if not kept:
         raise ValueError(f"no steps left after dropping {warmup} warm-up steps (run has {len(steps)})")
     total = sum(s["total_s"] for s in kept)
@@ -71,6 +73,7 @@ def summarize_run(header: dict, steps: list[dict], warmup: int = WARMUP_STEPS) -
         "status": header.get("status"),
         "steps_total": len(steps),
         "steps_kept": n,
+        "steps_profiled": sum(1 for s in steps if s.get("profiled")),
         "warmup_dropped": warmup,
         "step_time_mean_s": total / n,
         "step_time_stdev_s": statistics.stdev([s["total_s"] for s in kept]) if n > 1 else 0.0,

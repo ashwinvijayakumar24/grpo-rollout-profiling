@@ -71,3 +71,35 @@ def test_step_windows_cover_training_time(run_dir):
     covered = sum(s["total_s"] for s in steps)
     assert covered <= header["train_s"]
     assert covered > 0.5 * header["train_s"]
+
+
+@pytest.fixture(scope="module")
+def profiled_run_dir(tmp_path_factory):
+    if sys.platform == "darwin":
+        os.environ.setdefault("HF_DEACTIVATE_ASYNC_LOAD", "1")
+    from rlstudy.train import load_config, run
+
+    config = load_config(None, [
+        f"model={TINY}", "rollout.backend=hf", "grpo.max_steps=4", "grpo.prompts_per_step=2",
+        "grpo.num_generations=2", "grpo.max_completion_length=4", "data.limit=8",
+        "timing.profile_steps=[1, 2]",
+    ])
+    return run(config, tmp_path_factory.mktemp("prof") / "rep0")
+
+
+def test_profile_window_marks_steps_and_writes_busy(profiled_run_dir):
+    import json
+
+    _, steps = read_trace(profiled_run_dir)
+    assert [s["profiled"] for s in steps] == [False, True, True, False]
+    assert (profiled_run_dir / "profile_trace.json.gz").exists()
+    busy = json.loads((profiled_run_dir / "profile_busy.json").read_text())
+    # Each profiled step annotates every hooked stage once.
+    assert busy["rollout_gen"]["count"] == 2
+    assert busy["advantage_loss"]["count"] == 2
+
+
+def test_events_recorded(run_dir):
+    _, steps = read_trace(run_dir)
+    names = {e[0] for e in steps[1]["events"]}
+    assert {"rollout_gen", "reward", "advantage_loss", "optimizer_step", "backward"} <= names

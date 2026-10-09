@@ -8,3 +8,5 @@ data/raw/
 .DS_Store
 .pytest_cache/
 scratch/
+profile_trace.json.gz
+hf_trainer/

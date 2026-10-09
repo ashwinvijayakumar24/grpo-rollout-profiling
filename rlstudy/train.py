@@ -41,7 +41,12 @@ DEFAULTS: dict = {
         "sleep_mode": False,          # must stay off for sync_every > 1 (NOTES.md)
         "sync_every": 1,
     },
-    "timing": {"enabled": True},
+    "timing": {
+        "enabled": True,
+        "record_events": True,        # per-span start/end, to line up with GPU samples
+        "nvml_interval_s": 0.05,      # NVML sampler period; null turns it off
+        "profile_steps": None,        # [first, last] steps to capture with torch.profiler
+    },
 }
 
 
@@ -137,7 +142,13 @@ def run(config: dict, out_dir: Path) -> Path:
         )
 
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    timer = StepTimer(sync=device_sync_fn(device), enabled=config["timing"]["enabled"])
+    tc = config["timing"]
+    timer = StepTimer(sync=device_sync_fn(device), enabled=tc["enabled"], record_events=tc["record_events"])
+    sampler = None
+    if tc["nvml_interval_s"]:
+        from rlstudy.gpumon import NvmlSampler
+
+        sampler = NvmlSampler(out_dir / "gpu_util.csv", interval_s=tc["nvml_interval_s"]).start()
     dataset = as_hf_dataset(config["data"]["split"], limit=config["data"]["limit"])
 
     t0 = time.perf_counter()
@@ -150,6 +161,7 @@ def run(config: dict, out_dir: Path) -> Path:
         timer=timer,
         trace=trace,
         sync_every=config["rollout"]["sync_every"],
+        profile_steps=tuple(tc["profile_steps"]) if tc["profile_steps"] else None,
     )
     setup_s = time.perf_counter() - t0
     status = "failed"
@@ -158,6 +170,8 @@ def run(config: dict, out_dir: Path) -> Path:
         trainer.train()
         status = "completed"
     finally:
+        if sampler is not None:
+            sampler.stop()
         peak = torch.cuda.max_memory_allocated() if torch.cuda.is_available() else None
         trace.finish(
             status=status,

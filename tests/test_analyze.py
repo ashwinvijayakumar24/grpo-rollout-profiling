@@ -101,3 +101,13 @@ def test_analyze_experiment_end_to_end(tmp_path):
     assert agg["metrics"]["buckets.rollout_gen.mean_s_per_step"]["mean"] == pytest.approx(2.1)
     table = (exp / "summary.md").read_text()
     assert "| g4 | 3 |" in table and "±" in table
+
+
+def test_profiled_steps_are_excluded_from_timing():
+    steps = [fake_step(i) for i in range(6)]
+    steps[3]["profiled"] = True
+    steps[3]["buckets"]["rollout_gen"] = 99.0
+    s = summarize_run({}, steps, warmup=2)
+    assert s["steps_kept"] == 3
+    assert s["steps_profiled"] == 1
+    assert s["buckets"]["rollout_gen"]["mean_s_per_step"] == pytest.approx(3.0)
