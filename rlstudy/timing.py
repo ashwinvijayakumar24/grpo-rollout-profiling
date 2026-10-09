@@ -71,6 +71,10 @@ class StepRecord:
     other_s: float
     timing_enabled: bool
     outside_step: dict[str, float] = field(default_factory=dict)
+    # (name, start_ns, end_ns) per span, inclusive times on the timer's clock; only
+    # when record_events=True. Used to line spans up with GPU-utilization samples.
+    events: list[tuple[str, int, int]] = field(default_factory=list)
+    start_ns: int = 0
 
     def to_dict(self) -> dict:
         return {
@@ -82,6 +86,8 @@ class StepRecord:
             "counts": dict(self.counts),
             "outside_step": dict(self.outside_step),
             "timing_enabled": self.timing_enabled,
+            "start_ns": self.start_ns,
+            "events": [list(e) for e in self.events],
         }
 
 
@@ -91,10 +97,16 @@ class StepTimer:
         sync: Callable[[], None] = lambda: None,
         clock: Callable[[], int] = time.perf_counter_ns,
         enabled: bool = True,
+        record_events: bool = False,
+        annotate: Callable[[str], object] | None = None,
     ):
         self._sync = sync
         self._clock = clock
         self.enabled = enabled
+        self.record_events = record_events
+        # Optional factory returning a context manager per span (for example
+        # torch.profiler.record_function), so spans show up in a profiler trace.
+        self.annotate = annotate
         self._step: int | None = None
         self._step_start = 0
         self._open: list[list] = []
@@ -107,6 +119,7 @@ class StepTimer:
         self._buckets = {b: 0.0 for b in BUCKETS}
         self._sub = {}
         self._counts = {}
+        self._events = []
 
     def _now(self) -> int:
         self._sync()
@@ -141,6 +154,8 @@ class StepTimer:
             other_s=max(total - measured, 0.0),
             timing_enabled=self.enabled,
             outside_step=self._outside,
+            events=self._events,
+            start_ns=self._step_start,
         )
         self._outside = {}
         self._step = None
@@ -166,17 +181,25 @@ class StepTimer:
         if not self.enabled:
             return
         self._check_nesting(name)
-        # [name, start_ns, elapsed of top-level spans opened inside this one]
-        self._open.append([name, self._now(), 0])
+        ctx = self.annotate(name) if self.annotate is not None else None
+        if ctx is not None:
+            ctx.__enter__()
+        # [name, start_ns, elapsed of top-level spans opened inside this one, annotation]
+        self._open.append([name, self._now(), 0, ctx])
 
     def close(self, name: str) -> None:
         if not self.enabled:
             return
         if not self._open or self._open[-1][0] != name:
             raise RuntimeError(f"close({name!r}) but the innermost open span is {self._open[-1][0] if self._open else None!r}")
-        _, start, nested_top = self._open.pop()
-        elapsed = self._now() - start
+        _, start, nested_top, ctx = self._open.pop()
+        end = self._now()
+        if ctx is not None:
+            ctx.__exit__(None, None, None)
+        elapsed = end - start
         self._charge(name, (elapsed - nested_top) / 1e9)
+        if self.record_events and self._step is not None:
+            self._events.append((name, start, end))
         if name in BUCKETS:
             # Subtract this span from every enclosing span up to and including the
             # nearest top-level one, so no nanosecond is charged twice.
