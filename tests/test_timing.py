@@ -110,12 +110,97 @@ def test_repeated_spans_accumulate_and_are_counted():
     assert r.counts["advantage_loss"] == 4
 
 
-def test_top_level_buckets_may_not_nest():
+def test_nested_top_level_spans_use_exclusive_time():
+    # TRL's shape: training_step (advantage_loss) contains weight sync, generation,
+    # and rewards. Each is charged only its own time.
+    gpu = FakeGPU()
+    t = make(gpu)
+    t.begin_step(0)
+    with t.span("advantage_loss"):
+        gpu.cpu(0.05)  # tokenizing, padding
+        with t.span("weight_sync"):
+            gpu.launch(0.2)
+        with t.span("rollout_gen"):
+            gpu.cpu(3.0)
+        with t.span("reward"):
+            gpu.cpu(0.1)
+        with t.span("old_logprob"):
+            gpu.launch(0.4)
+        gpu.launch(0.6)  # loss forward + backward
+    r = t.end_step()
+    assert r.buckets == pytest.approx(
+        {"weight_sync": 0.2, "rollout_gen": 3.0, "reward": 0.1, "advantage_loss": 1.05, "optimizer_step": 0.0}
+    )
+    assert r.sub_buckets["old_logprob"] == pytest.approx(0.4)
+    assert sum(r.buckets.values()) + r.other_s == pytest.approx(r.total_s)
+    assert r.other_s == pytest.approx(0.0)
+
+
+def test_deep_nesting_subtracts_only_once():
+    gpu = FakeGPU()
+    t = make(gpu)
+    t.begin_step(0)
+    with t.span("advantage_loss"):
+        with t.span("rollout_gen"):
+            gpu.cpu(1.0)
+            with t.span("weight_sync"):
+                gpu.cpu(0.5)
+        gpu.cpu(0.25)
+    r = t.end_step()
+    assert r.buckets["advantage_loss"] == pytest.approx(0.25)
+    assert r.buckets["rollout_gen"] == pytest.approx(1.0)
+    assert r.buckets["weight_sync"] == pytest.approx(0.5)
+    assert r.total_s == pytest.approx(1.75)
+
+
+def test_top_level_inside_sub_bucket_is_subtracted_from_both():
+    gpu = FakeGPU()
+    t = make(gpu)
+    t.begin_step(0)
+    with t.span("advantage_loss"):
+        with t.span("old_logprob"):
+            gpu.cpu(0.3)
+            with t.span("reward"):
+                gpu.cpu(0.1)
+    r = t.end_step()
+    assert r.sub_buckets["old_logprob"] == pytest.approx(0.3)
+    assert r.buckets["advantage_loss"] == pytest.approx(0.3)
+    assert r.buckets["reward"] == pytest.approx(0.1)
+
+
+def test_same_bucket_inside_itself_raises():
     t = make(FakeGPU())
     t.begin_step(0)
     with t.span("rollout_gen"):
-        with pytest.raises(RuntimeError, match="may not nest"):
-            with t.span("weight_sync"):
+        with pytest.raises(RuntimeError, match="inside itself"):
+            with t.span("rollout_gen"):
+                pass
+
+
+def test_open_close_across_callbacks():
+    gpu = FakeGPU()
+    t = make(gpu)
+    t.begin_step(0)
+    t.open("optimizer_step")  # on_pre_optimizer_step
+    gpu.launch(0.1)
+    t.close("optimizer_step")  # on_optimizer_step
+    assert t.end_step().buckets["optimizer_step"] == pytest.approx(0.1)
+
+
+def test_mismatched_close_raises():
+    t = make(FakeGPU())
+    t.begin_step(0)
+    t.open("reward")
+    with pytest.raises(RuntimeError, match="innermost"):
+        t.close("rollout_gen")
+
+
+def test_sub_bucket_under_wrong_parent_raises():
+    t = make(FakeGPU())
+    t.begin_step(0)
+    with t.span("rollout_gen"):
+        with pytest.raises(RuntimeError, match="must be inside"):
+            with t.span("old_logprob"):
                 pass
 
 
@@ -145,7 +230,7 @@ def test_unknown_bucket_raises():
     t = make(FakeGPU())
     t.begin_step(0)
     with pytest.raises(KeyError):
-        with t.span("backward"):
+        with t.span("not_a_bucket"):
             pass
 
 

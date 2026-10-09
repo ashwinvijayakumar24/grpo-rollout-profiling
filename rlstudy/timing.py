@@ -10,10 +10,13 @@ One training step is split into five measured top-level buckets plus ``other``:
     other           step total minus the five above (data, padding, clipping, logging)
 
 Because ``other`` is defined as the remainder, the buckets always add up to the step
-total. That only means something if no time is counted twice, so top-level spans may
-not nest: opening one inside another raises. Sub-buckets (for example
-``old_logprob`` inside ``advantage_loss``) are allowed only inside their parent and
-are reported separately; they never feed the sum.
+total. That only means something if no time is counted twice. Trainers nest their
+stages (TRL calls generation and rewards from inside ``training_step``), so a
+top-level span is charged its *exclusive* time: its elapsed time minus the elapsed
+time of top-level spans opened inside it, like "self time" in a profiler. Sub-buckets
+(for example ``old_logprob`` inside ``advantage_loss``) are a breakdown of their
+parent: they are allowed only directly under it, are reported separately, and never
+feed the sum.
 
 GPU work is asynchronous: a kernel launch returns before the kernel runs. Reading the
 clock without waiting would charge, say, the backward pass to whichever later bucket
@@ -33,7 +36,9 @@ from typing import Callable
 BUCKETS = ("rollout_gen", "reward", "advantage_loss", "optimizer_step", "weight_sync")
 SUB_BUCKETS = {
     "old_logprob": "advantage_loss",
-    "loss_forward_backward": "advantage_loss",
+    "ref_logprob": "advantage_loss",
+    "loss_forward": "advantage_loss",
+    "backward": "advantage_loss",
     "sync_merge": "weight_sync",
     "sync_copy": "weight_sync",
     "sync_unmerge": "weight_sync",
@@ -92,7 +97,7 @@ class StepTimer:
         self.enabled = enabled
         self._step: int | None = None
         self._step_start = 0
-        self._open: list[str] = []
+        self._open: list[list] = []
         self._reset_accumulators()
         # Time spent in spans while no step is open (for example the very first
         # weight sync before training starts). Reported on the next step's record.
@@ -122,7 +127,7 @@ class StepTimer:
         if self._step is None:
             raise RuntimeError("end_step() with no open step")
         if self._open:
-            raise RuntimeError(f"end_step() with spans still open: {self._open}")
+            raise RuntimeError(f"end_step() with spans still open: {self._open_names()}")
         total = (self._now() - self._step_start) / 1e9
         measured = sum(self._buckets.values())
         if measured > total + _SUM_TOLERANCE_S:
@@ -144,28 +149,49 @@ class StepTimer:
     @contextmanager
     def span(self, name: str):
         """Time a block and charge it to ``name`` (a bucket or a sub-bucket)."""
-        if not self.enabled:
-            yield
-            return
-        self._check_nesting(name)
-        self._open.append(name)
-        start = self._now()
+        self.open(name)
         try:
             yield
         finally:
-            elapsed = (self._now() - start) / 1e9
-            self._open.pop()
-            self._charge(name, elapsed)
+            self.close(name)
+
+    def open(self, name: str) -> None:
+        """Start a span explicitly, for boundaries that are two callbacks, not one block."""
+        if not self.enabled:
+            return
+        self._check_nesting(name)
+        # [name, start_ns, elapsed of top-level spans opened inside this one]
+        self._open.append([name, self._now(), 0])
+
+    def close(self, name: str) -> None:
+        if not self.enabled:
+            return
+        if not self._open or self._open[-1][0] != name:
+            raise RuntimeError(f"close({name!r}) but the innermost open span is {self._open[-1][0] if self._open else None!r}")
+        _, start, nested_top = self._open.pop()
+        elapsed = self._now() - start
+        self._charge(name, (elapsed - nested_top) / 1e9)
+        if name in BUCKETS:
+            # Subtract this span from every enclosing span up to and including the
+            # nearest top-level one, so no nanosecond is charged twice.
+            for entry in reversed(self._open):
+                entry[2] += elapsed
+                if entry[0] in BUCKETS:
+                    break
+
+    def _open_names(self) -> list[str]:
+        return [e[0] for e in self._open]
 
     def _check_nesting(self, name: str) -> None:
+        names = self._open_names()
         if name in BUCKETS:
-            top = [s for s in self._open if s in BUCKETS]
-            if top:
-                raise RuntimeError(f"span {name!r} opened inside {top[-1]!r}; top-level buckets may not nest")
+            if name in names:
+                raise RuntimeError(f"span {name!r} opened inside itself")
         elif name in SUB_BUCKETS:
             parent = SUB_BUCKETS[name]
-            if parent not in self._open:
-                raise RuntimeError(f"sub-bucket {name!r} must be inside {parent!r}, open spans: {self._open}")
+            top = [n for n in names if n in BUCKETS]
+            if not top or top[-1] != parent:
+                raise RuntimeError(f"sub-bucket {name!r} must be inside {parent!r}, open spans: {names}")
         else:
             raise KeyError(f"unknown bucket {name!r}")
 
