@@ -16,7 +16,7 @@ TODO after E1–E4.
 | Framework | TRL 1.14.2 `GRPOTrainer`, vLLM 0.30.0 colocated on the same GPU | DECISIONS.md |
 | Task | GSM8K, 1,000 frozen training problems (seed 0) | `data/gsm8k_subset/manifest.json` |
 | Reward | exact match on the number after `####` (1.0), plus 0.1 for the `#### <n>` format | `rlstudy/reward.py` |
-| Batch | 8 prompts × 8 samples = 64 completions per step, max 256 new tokens | `configs/baseline.yaml` |
+| Batch | 8 prompts × 8 samples = 64 completions per step, max 256 new tokens; one generation round per step, loss computed in 4 micro-batches of 16 (64 at once ran out of memory) | `configs/baseline.yaml` |
 | KL / reference model | none (`beta = 0`) | `configs/baseline.yaml` |
 
 ## 2. Methodology
@@ -36,7 +36,7 @@ to exactly one bucket:
 | `rollout_gen` | vLLM `generate` (or HF `generate`) and converting outputs to token lists |
 | `weight_sync` | `VLLMGeneration.sync_weights()`: one device-to-device copy per parameter |
 | `reward` | the two reward functions (pure Python) |
-| `advantage_loss` | tokenizing/padding, old-log-prob forward, advantages, loss forward, backward |
+| `advantage_loss` | tokenizing/padding, old-log-prob forward, advantages, and the loss forward + backward of every micro-batch |
 | `optimizer_step` | `optimizer.step()` |
 | `other` | the remainder: next-batch fetch, gradient clipping, `zero_grad`, LR schedule, logging |
 
