@@ -173,3 +173,14 @@ Newest entries at the bottom. Rules:
   0.588 ± 0.061 (vLLM) vs 0.601 ± 0.039 (HF). Baseline reproduces across three jobs:
   2.266 (E1), 2.291 (E2 G8), 2.278 (E5) s/step.
 - **All planned experiments done (E0–E5).** WRITEUP.md and FUTURE.md complete.
+
+## 2026-10-10
+
+- **E6 (held-out accuracy) submitted**, job 13943303 (git `c14bd96`). Scores the base
+  model and GRPO-trained models on the frozen 200-problem eval split (from GSM8K
+  test, never trained on), greedy decoding, 512-token budget. Reports strict accuracy
+  (the training rule), lenient accuracy (last number, any format), and format rate, so
+  format learning can be told apart from better math. Models: base; E1 config at 50
+  steps × seeds 0–2; 125 steps (one pass over the training set) × seed 0, exploratory.
+- PACE's untracked copy of E5 results (identical to the committed files) was moved to
+  `~/ps-simpliearn-0/grpo_results_backup/` so the checkout could pull.
