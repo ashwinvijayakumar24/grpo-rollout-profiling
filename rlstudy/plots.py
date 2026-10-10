@@ -105,7 +105,7 @@ def sweep(points: list[tuple[float, dict]], out: Path, title: str, xlabel: str, 
     ax.errorbar(xs, mean, yerr=[lo, hi], color=SERIES, linewidth=2, marker="o", markersize=7,
                 markeredgecolor=SURFACE, markeredgewidth=2, capsize=3, elinewidth=1)
     for x, m, p in zip(xs, mean, pts):
-        ax.annotate(f"{m:,.3g}", (x, m), textcoords="offset points", xytext=(9, 4), ha="left",
+        ax.annotate(f"{m:,.0f}" if abs(m) >= 100 else f"{m:.3g}", (x, m), textcoords="offset points", xytext=(9, 4), ha="left",
                     fontsize=8.5, color=INK)
     if log_x:
         ax.set_xscale("log", base=2)
@@ -154,8 +154,13 @@ def reward_curve(run_dirs: list[Path], out: Path, title: str, key: str = "reward
     return out
 
 
+def _natural_key(name: str):
+    """Sort arm names like G4 < G8 < G16 and len128 < len512, not alphabetically."""
+    import re
+
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", name)]
+
+
 def load_arms(exp_dir: Path) -> dict[str, dict]:
-    return {
-        p.parent.name: json.loads(p.read_text())
-        for p in sorted(Path(exp_dir).glob("*/arm_summary.json"))
-    }
+    paths = sorted(Path(exp_dir).glob("*/arm_summary.json"), key=lambda p: _natural_key(p.parent.name))
+    return {p.parent.name: json.loads(p.read_text()) for p in paths}
