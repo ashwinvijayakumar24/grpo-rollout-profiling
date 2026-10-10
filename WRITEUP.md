@@ -238,10 +238,50 @@ cheapest rollout speed-up, but it also removes reward signal.
 
 ## 6. E4: Weight-sync cost and GPU idleness
 
+**Result: one sync costs 0.18 s no matter how often it runs, and the GPU is idle for
+98 % of it. Syncing every 16 steps instead of every step saves 7.6 % of step time, but
+the sampler then generates from stale weights, and learning looked slower (not
+statistically settled at 3 reps).**
+
+Source: `results/E4_sync_freq/{sync1,sync4,sync16}/arm_summary.json` (job 13930289,
+arms interleaved on one GPU, 3 reps × 64 steps each); GPU busy fractions from
+`results/E4_sync_freq/{sync1,sync16}_profiled/rep0/profile_busy.json` (steps 32–33,
+a sync step for both schedules). vLLM sleep mode was off in every arm (NOTES.md §2).
+
 ![E4 sync per step](results/figures/E4_sync_per_step.png)
 
-TODO: seconds per sync, per-step amortized cost at k = 1, 4, 16; GPU busy fraction
-during sync from the profiled arms; reward next to time (stale samplers).
+| Sync every | Step (s) | Sync per step (s) | Cost of one sync (s) | Syncs counted | GPU busy during sync | Correct, first 10 → last 10 steps |
+|---|---|---|---|---|---|---|
+| 1 step | 2.287 ± 0.016 | 0.179 | 0.179 ± 0.003 | 62 | 1.9 % | 0.314 → 0.654 ± 0.029 |
+| 4 steps | 2.159 ± 0.013 | 0.045 | 0.185 ± 0.011 | 15 | — | 0.280 → 0.642 ± 0.039 |
+| 16 steps | 2.113 ± 0.009 | 0.009 | 0.179 ± 0.000 | 3 | 1.9 % | 0.243 → 0.590 ± 0.075 |
+
+**Mechanism.**
+
+- *Sync cost is fixed per sync.* Every sync pushes the same 338 tensors (3.09 GB), so
+  its cost does not depend on how long it has been since the last one. Amortizing it
+  over k steps divides the per-step cost by k, and the step time falls by almost
+  exactly the sync time saved (2.287 → 2.113 s, a 0.174 s drop against 0.170 s less
+  sync per step). Rollout and training times are unchanged across arms (0.77–0.78 s
+  and 1.29 s).
+- *The GPU is idle during sync.* In both profiled arms the GPU ran kernels for 1.9 %
+  of the sync span, matching E1's 2.0 %. The data movement itself is a few
+  milliseconds of GPU work; the rest is host-side, per-tensor work in
+  `VLLMGeneration.sync_weights` → vLLM `load_weights`, one call per tensor.
+  *(Inference, as in E1.)*
+- *Can sync overlap with other work?* On this colocated setup, not without code
+  changes: TRL runs sync, generation, and training strictly one after another in one
+  Python process, and sync is CPU-bound, so the idle GPU has nothing queued to run.
+  Two measured facts suggest where the headroom is: the GPU work in a sync is about
+  3.5 ms, and the sync takes about 180 ms. *(Speculative: batching all tensors into one
+  `load_weights` call, or copying one flat buffer, should close much of that gap. Not
+  built or measured here; see FUTURE.md.)*
+- *Staleness has a learning cost.* With k = 16, the sampler generates steps 1–15 from
+  the starting weights, while the trainer has moved on. TRL's importance-sampling
+  correction reweights for this, but early correctness was lower (0.243 vs 0.314 over
+  the first 10 steps) and the final window was lower and noisier (0.590 ± 0.075 vs
+  0.654 ± 0.029). With 3 reps the final-window ranges overlap, so this is suggestive,
+  not established.
 
 ## 7. What I'd build differently in a rollout system
 
