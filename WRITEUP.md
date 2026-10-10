@@ -1,7 +1,7 @@
 # Where does GRPO training time go? A rollout-infrastructure profile
 
-> **Status: skeleton.** No GPU experiment has run yet. Every number below is TODO
-> until it can be traced to a file in `results/`. Nothing here is estimated.
+> **Status: in progress.** E1 is complete. Sections for experiments not yet run say
+> TODO. Every number traces to a file in `results/`; nothing here is estimated.
 
 ## Summary
 
@@ -11,7 +11,7 @@ TODO after E1–E4.
 
 | Item | Value | Source |
 |---|---|---|
-| GPU / driver / CUDA | TODO | `results/<exp>/<arm>/rep*/run.json` → `env.gpus` |
+| GPU / driver / CUDA | NVIDIA H100 80GB HBM3, driver 615.71.09, torch 2.13.0+cu129 | `results/E1_breakdown/baseline/rep0/run.json` → `env` |
 | Model | Qwen2.5-1.5B-Instruct, full fine-tune, bf16 | `configs/baseline.yaml` |
 | Framework | TRL 1.14.2 `GRPOTrainer`, vLLM 0.30.0 colocated on the same GPU | DECISIONS.md |
 | Task | GSM8K, 1,000 frozen training problems (seed 0) | `data/gsm8k_subset/manifest.json` |
@@ -66,23 +66,87 @@ standard deviation across reps; figures show min–max whiskers.
 
 ## 3. E1: Where the time goes at baseline
 
+**Result: at baseline, generating answers is a third of the step, not most of it.
+The training-side compute (an extra scoring pass, the loss forward, and backward)
+takes 57%. Weight sync takes 8%, and during it the GPU is almost entirely idle.**
+
+Source: `results/E1_breakdown/baseline/arm_summary.json` (job 13930286, H100 80GB
+HBM3, 3 reps × 50 steps, first 2 steps of each dropped). Mean ± sample standard
+deviation across reps.
+
 ![E1 breakdown](results/figures/E1_breakdown.png)
 
 | Stage | Share of step time | Seconds per step |
 |---|---|---|
-| Rollout generation | TODO | TODO |
-| Advantage + loss + backward | TODO | TODO |
-| of which: old-log-prob forward | TODO | TODO |
-| Weight sync | TODO | TODO |
-| Optimizer step | TODO | TODO |
-| Reward | TODO | TODO |
-| Other | TODO | TODO |
+| Rollout generation | 33.2 ± 0.4 % | 0.752 ± 0.005 |
+| Advantage + loss + backward | 57.1 ± 0.5 % | 1.295 ± 0.019 |
+| ↳ backward (8 micro-batches) | | 0.653 ± 0.007 |
+| ↳ loss forward (8 micro-batches) | | 0.301 ± 0.000 |
+| ↳ old-log-prob forward | | 0.298 ± 0.013 |
+| Weight sync | 7.8 ± 0.1 % | 0.178 ± 0.001 |
+| Optimizer step | 0.8 % | 0.017 |
+| Reward | < 0.1 % | 0.001 |
+| Other | 1.1 % | 0.024 |
+| **Whole step** | | **2.266 ± 0.014** |
 
-GPU busy fraction per stage (profiled arm): TODO (`results/E1_breakdown/baseline_profiled/rep0/profile_busy.json`).
+Rollout throughput was 11,383 ± 296 generated tokens per second (64 completions per
+step, mean length 134 tokens, 9.8 % cut off at the 256-token cap).
 
-Mechanism: TODO.
+**How busy the GPU is inside each stage.** A separate profiled run captured steps
+20–21 with `torch.profiler` and measured the fraction of each stage during which any
+GPU kernel or memory copy was running
+(`results/E1_breakdown/baseline_profiled/rep0/profile_busy.json`):
 
-Reward curve (does training work at all?): ![E1 reward](results/figures/E1_reward.png) TODO.
+| Stage | GPU busy |
+|---|---|
+| Weight sync | 2.0 % |
+| Rollout generation | 65.7 % |
+| Old-log-prob forward | 83.4 % |
+| Loss forward | 75.4 % |
+| Backward | 90.5 % |
+| Optimizer step | 93.2 % |
+
+The profiler adds CPU overhead of its own: profiled rollout steps took 0.91–0.95 s
+against 0.75 s unprofiled, so idle fractions for CPU-heavy stages like rollout are
+upper bounds. Weight sync is the exception: it took 0.18 s with and without the
+profiler, so its 2.0 % figure is not a profiler artifact.
+
+**Mechanism.**
+
+- *Why training compute outweighs generation here.* Generation is decode: one token
+  per sequence per model pass, but all 64 sequences advance together, so the GPU
+  processes 64 tokens per pass. The training side must run full forward and backward
+  passes over every prompt and completion token, about 64 × (prompt + completion)
+  tokens. Backward costs roughly twice a forward. Add the separate no-grad forward
+  that TRL runs to correct for vLLM/trainer numeric differences (0.298 s, 13 % of the
+  step), and the trainer side is about 1.7 × the generation time. With short
+  completions (mean 134 tokens) generation has little to amortize; E3 tests what
+  longer generations do to this balance.
+- *Why weight sync is slow and idle.* The sync pushes 338 separate tensors (3.09 GB in
+  bf16; `results/env/model_param_count.json`) through vLLM's `load_weights`, one call
+  per tensor. The GPU did 7.1 ms of kernel work across two syncs, about 3.5 ms per sync,
+  yet each sync took about 180 ms. That is about 0.53 ms per tensor of host-side work
+  while the GPU waits. *(Inference: I did not time the Python loop separately; the
+  attribution to per-tensor overhead rests on the GPU being idle 98 % of the span.)*
+- *Why the rollout GPU is idle a third of the time.* vLLM's scheduler, sampling, and
+  output processing run on the CPU between GPU steps, and with 64 short sequences each
+  decode step is small. *(Partly speculative: the profiler inflates CPU time, see
+  above.)*
+- *Reward is free.* Exact-match checking on 64 strings is about 1 ms.
+
+**A measurement lesson.** NVML, the driver's utilization counter, reported about 80 %
+GPU utilization inside weight-sync spans
+(`nvml_util_by_span.weight_sync` in the same `arm_summary.json`), while the profiler
+measured 2 %. NVML averages over a window of up to one second, longer than the 0.18 s
+sync, so it reports the backward pass that ran just before. Sub-second stages need
+kernel-level traces, not utilization counters.
+
+**Does training work at all?** Yes. The fraction of sampled answers that are exactly
+correct rose from 0.309 ± 0.013 over the first 10 steps to 0.588 ± 0.061 over the
+last 10. This is the training batch, not a held-out evaluation, and the study does
+not chase accuracy.
+
+![E1 reward](results/figures/E1_reward.png)
 
 ## 4. E2: Rollout throughput vs samples per prompt
 
