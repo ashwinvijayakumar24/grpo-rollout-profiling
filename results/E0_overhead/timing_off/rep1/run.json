@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "started_unix": 1791602335.086232,
+  "config": {
+    "experiment": "E0_overhead",
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "dtype": "bfloat16",
+    "seed": 1,
+    "data": {
+      "split": "train",
+      "limit": null
+    },
+    "lora": {
+      "enabled": false,
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.0,
+      "target_modules": "all-linear"
+    },
+    "grpo": {
+      "prompts_per_step": 8,
+      "num_generations": 8,
+      "micro_batch": 8,
+      "max_completion_length": 256,
+      "temperature": 1.0,
+      "learning_rate": 1e-06,
+      "max_steps": 50,
+      "beta": 0.0,
+      "gradient_checkpointing": false
+    },
+    "rollout": {
+      "backend": "vllm",
+      "gpu_memory_utilization": 0.15,
+      "sleep_mode": false,
+      "sync_every": 1
+    },
+    "timing": {
+      "enabled": false,
+      "record_events": false,
+      "nvml_interval_s": null,
+      "profile_steps": null
+    }
+  },
+  "config_hash": "74015ff71e6f1df4",
+  "git": {
+    "sha": "c7605be626eea283b7a62d5fbf3690ac64731246",
+    "dirty": false
+  },
+  "env": {
+    "hostname": "atl1-1-03-008-27-0.pace.gatech.edu",
+    "platform": "Linux-5.14.0-687.49.1.el9_8.x86_64-x86_64-with-glibc2.34",
+    "python": "3.12.15",
+    "slurm": {
+      "SLURM_JOB_ID": "13931400",
+      "SLURM_JOB_PARTITION": "gpu-h100",
+      "SLURM_JOB_QOS": "inferno",
+      "SLURM_JOB_NODELIST": "atl1-1-03-008-27-0"
+    },
+    "gpus": [
+      {
+        "name": "NVIDIA H100 80GB HBM3",
+        "memory_total": "81559 MiB",
+        "driver_version": "615.71.09",
+        "max_sm_clock": "1980 MHz"
+      }
+    ],
+    "libraries": {
+      "torch": "2.13.0+cu129",
+      "vllm": "0.30.0+cu129",
+      "trl": "1.14.2",
+      "transformers": "5.17.0",
+      "accelerate": "1.15.0",
+      "peft": "0.21.2",
+      "datasets": "5.0.1",
+      "flashinfer-python": "0.6.18.post1",
+      "torch_cuda": "12.9",
+      "cudnn": 92000
+    }
+  },
+  "experiment": "E0_overhead",
+  "finished_unix": 1791602469.236744,
+  "status": "completed",
+  "setup_s": 20.39375976100564,
+  "train_s": 113.6685109710088,
+  "device": "cuda",
+  "cuda_max_memory_allocated": 54896742912
+}
