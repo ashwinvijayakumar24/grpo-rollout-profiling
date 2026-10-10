@@ -83,7 +83,7 @@ Newest entries at the bottom. Rules:
   - `vllm` arm failed again with out-of-memory in the loss forward, with vLLM holding
     its 0.3 share. Fix: `gpu_memory_utilization` 0.15 and `micro_batch` 8.
 - **Smoke job 13926413 completed, both arms** (git `57aea3f`, node atl1-1-03-008-27-0).
-  Artifacts in `results/smoke/` (profiler trace kept on PACE only, 29.5 MB).
+  Artifacts in `results/smoke/`. The 29.5 MB profiler trace is gitignored; its only copy is on the Mac (`results/smoke/vllm/rep0/profile_trace.json.gz`) because the PACE copy was deleted when the smoke directory was cleared before the pull.
   This is a single 8-step run, so these are plumbing checks, not results:
   - vLLM path works end to end: weight sync, generation, old-log-prob pass, micro-
     batched loss (8 micro-batches of 8), profiler window, NVML sampler. Peak
@@ -95,3 +95,6 @@ Newest entries at the bottom. Rules:
   planning estimate): about 102 GPU-minutes for E0–E4 plus about 1 minute of process
   start-up per run; longest single run about 4.5 minutes. Nothing near the 30-minute
   flag. Submitting all five experiments.
+- **Experiments submitted** (git `bd0d33a`, `inferno`/`gpu-h100`): E0 13930285,
+  E1 13930286, E2 13930287, E3 13930288, E4 13930289. One job per experiment, so
+  every arm of an experiment shares one GPU.
