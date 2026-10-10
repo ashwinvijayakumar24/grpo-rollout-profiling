@@ -65,6 +65,10 @@ def build(results: Path, out: Path) -> list[str]:
                           "Sync every k steps", "Seconds per step", log_x=True,
                           note="Source: results/E4_sync_freq."))
 
+    if arms := have("E5_backend"):
+        made.append(breakdown(arms, out / "E5_breakdown.png", "Step-time split by rollout backend",
+                              note="Source: results/E5_backend. Same loop, 64 completions/step, 256-token cap."))
+
     for name in skipped:
         print(f"TODO: no results yet for {name}")
     return [str(p) for p in made]
