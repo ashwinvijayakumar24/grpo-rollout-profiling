@@ -1,0 +1,392 @@
+{
+  "n_reps": 3,
+  "runs": [
+    "E2_group_size/G16/rep0",
+    "E2_group_size/G16/rep1",
+    "E2_group_size/G16/rep2"
+  ],
+  "slurm_jobs": [
+    "13930287"
+  ],
+  "gpus": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "config_hashes": [
+    "0de828f16894abee",
+    "7b815eef232ff244",
+    "9ba9fc1197391558"
+  ],
+  "metrics": {
+    "buckets.advantage_loss.mean_s_per_step": {
+      "mean": 2.6010517432152778,
+      "stdev": 0.029844032031504025,
+      "min": 2.5828879049791666,
+      "max": 2.6354954935625,
+      "n": 3
+    },
+    "buckets.advantage_loss.share": {
+      "mean": 0.6571819141616818,
+      "stdev": 0.00033020323939352215,
+      "min": 0.6568007113022352,
+      "max": 0.6573794050230398,
+      "n": 3
+    },
+    "buckets.optimizer_step.mean_s_per_step": {
+      "mean": 0.017703844083333333,
+      "stdev": 4.043057098447498e-05,
+      "min": 0.017657319104166666,
+      "max": 0.017730453333333333,
+      "n": 3
+    },
+    "buckets.optimizer_step.share": {
+      "mean": 0.00447351081536287,
+      "stdev": 5.993444406509269e-05,
+      "min": 0.004404317121904336,
+      "max": 0.004509253163976291,
+      "n": 3
+    },
+    "buckets.other.mean_s_per_step": {
+      "mean": 0.061245798604166644,
+      "stdev": 0.0005259882592960896,
+      "min": 0.06065197331249989,
+      "max": 0.06165312995833336,
+      "n": 3
+    },
+    "buckets.other.share": {
+      "mean": 0.015475387472819103,
+      "stdev": 0.00018392133356763738,
+      "min": 0.015323237705731433,
+      "max": 0.0156797779564382,
+      "n": 3
+    },
+    "buckets.reward.mean_s_per_step": {
+      "mean": 0.000853048125,
+      "stdev": 2.120621025824574e-05,
+      "min": 0.0008300485208333334,
+      "max": 0.0008718257708333334,
+      "n": 3
+    },
+    "buckets.reward.share": {
+      "mean": 0.0002155429172857286,
+      "stdev": 5.528626594821748e-06,
+      "min": 0.00021107244253524773,
+      "max": 0.00022172490695291175,
+      "n": 3
+    },
+    "buckets.rollout_gen.mean_s_per_step": {
+      "mean": 1.089450586111111,
+      "stdev": 0.013662361416355464,
+      "min": 1.0800664025833333,
+      "max": 1.1051250703333333,
+      "n": 3
+    },
+    "buckets.rollout_gen.share": {
+      "mean": 0.27525861259910595,
+      "stdev": 0.0005084840346069723,
+      "min": 0.2746851843882194,
+      "max": 0.27565460194726127,
+      "n": 3
+    },
+    "buckets.weight_sync.mean_s_per_step": {
+      "mean": 0.18757434075,
+      "stdev": 0.0008429142717579142,
+      "min": 0.1869218570625,
+      "max": 0.18852604502083334,
+      "n": 3
+    },
+    "buckets.weight_sync.share": {
+      "mean": 0.04739503203374448,
+      "stdev": 0.0003235109258529095,
+      "min": 0.04702460679969408,
+      "max": 0.04762205587689659,
+      "n": 3
+    },
+    "completion_len_max_mean": {
+      "mean": 256.0,
+      "stdev": 0.0,
+      "min": 256.0,
+      "max": 256.0,
+      "n": 3
+    },
+    "completion_len_mean": {
+      "mean": 149.2377387152778,
+      "stdev": 2.446709736197506,
+      "min": 146.96809895833334,
+      "max": 151.82958984375,
+      "n": 3
+    },
+    "completion_tokens_per_step": {
+      "mean": 19102.43055555556,
+      "stdev": 313.17884623328075,
+      "min": 18811.916666666668,
+      "max": 19434.1875,
+      "n": 3
+    },
+    "nvml_util_by_span.advantage_loss.mean_util_gpu_pct": {
+      "mean": 80.48551825887819,
+      "stdev": 0.5714081008588859,
+      "min": 79.86238279095421,
+      "max": 80.98492597577389,
+      "n": 3
+    },
+    "nvml_util_by_span.advantage_loss.samples": {
+      "mean": 3658.3333333333335,
+      "stdev": 49.237519569260726,
+      "min": 3626.0,
+      "max": 3715.0,
+      "n": 3
+    },
+    "nvml_util_by_span.backward.mean_util_gpu_pct": {
+      "mean": 94.70874783110973,
+      "stdev": 0.21296785029361662,
+      "min": 94.46715328467154,
+      "max": 94.86928628708901,
+      "n": 3
+    },
+    "nvml_util_by_span.backward.samples": {
+      "mean": 1251.6666666666667,
+      "stdev": 21.385353243127252,
+      "min": 1233.0,
+      "max": 1275.0,
+      "n": 3
+    },
+    "nvml_util_by_span.loss_forward.mean_util_gpu_pct": {
+      "mean": 94.73217193093147,
+      "stdev": 0.14928787380750178,
+      "min": 94.56105610561056,
+      "max": 94.83579638752053,
+      "n": 3
+    },
+    "nvml_util_by_span.loss_forward.samples": {
+      "mean": 603.0,
+      "stdev": 7.937253933193772,
+      "min": 594.0,
+      "max": 609.0,
+      "n": 3
+    },
+    "nvml_util_by_span.old_logprob.mean_util_gpu_pct": {
+      "mean": 88.70718645530035,
+      "stdev": 1.5939336407209128,
+      "min": 86.88545454545455,
+      "max": 89.84519572953737,
+      "n": 3
+    },
+    "nvml_util_by_span.old_logprob.samples": {
+      "mean": 554.0,
+      "stdev": 6.928203230275509,
+      "min": 550.0,
+      "max": 562.0,
+      "n": 3
+    },
+    "nvml_util_by_span.optimizer_step.mean_util_gpu_pct": {
+      "mean": 94.99305555555556,
+      "stdev": 0.43317972704863134,
+      "min": 94.5,
+      "max": 95.3125,
+      "n": 3
+    },
+    "nvml_util_by_span.optimizer_step.samples": {
+      "mean": 15.333333333333334,
+      "stdev": 3.0550504633038935,
+      "min": 12.0,
+      "max": 18.0,
+      "n": 3
+    },
+    "nvml_util_by_span.reward.mean_util_gpu_pct": {
+      "mean": 98.0,
+      "stdev": null,
+      "min": 98.0,
+      "max": 98.0,
+      "n": 1
+    },
+    "nvml_util_by_span.reward.samples": {
+      "mean": 1.0,
+      "stdev": null,
+      "min": 1.0,
+      "max": 1.0,
+      "n": 1
+    },
+    "nvml_util_by_span.rollout_gen.mean_util_gpu_pct": {
+      "mean": 52.4743472017552,
+      "stdev": 0.7838078469956483,
+      "min": 51.795252225519285,
+      "max": 53.332042594385285,
+      "n": 3
+    },
+    "nvml_util_by_span.rollout_gen.samples": {
+      "mean": 1018.3333333333334,
+      "stdev": 12.701705922171767,
+      "min": 1011.0,
+      "max": 1033.0,
+      "n": 3
+    },
+    "nvml_util_by_span.weight_sync.mean_util_gpu_pct": {
+      "mean": 62.81409292461924,
+      "stdev": 0.775597049410477,
+      "min": 61.92982456140351,
+      "max": 63.379120879120876,
+      "n": 3
+    },
+    "nvml_util_by_span.weight_sync.samples": {
+      "mean": 177.66666666666666,
+      "stdev": 5.8594652770823155,
+      "min": 171.0,
+      "max": 182.0,
+      "n": 3
+    },
+    "reward.correct_first": {
+      "mean": 0.30234374999999997,
+      "stdev": 0.014256474680386445,
+      "min": 0.29296875,
+      "max": 0.31875,
+      "n": 3
+    },
+    "reward.correct_last": {
+      "mean": 0.6843750000000001,
+      "stdev": 0.014594954447085489,
+      "min": 0.66875,
+      "max": 0.69765625,
+      "n": 3
+    },
+    "reward.reward_first": {
+      "mean": 0.3513281325499216,
+      "stdev": 0.01488009777397066,
+      "min": 0.3414062589406967,
+      "max": 0.36843751072883607,
+      "n": 3
+    },
+    "reward.reward_last": {
+      "mean": 0.7751562625169753,
+      "stdev": 0.015126619580042206,
+      "min": 0.7589062631130219,
+      "max": 0.7888281315565109,
+      "n": 3
+    },
+    "reward.window": {
+      "mean": 10.0,
+      "stdev": 0.0,
+      "min": 10.0,
+      "max": 10.0,
+      "n": 3
+    },
+    "rollout_completions_per_s": {
+      "mean": 117.50264969426978,
+      "stdev": 1.4635777202813092,
+      "min": 115.82399443837791,
+      "max": 118.5112319889277,
+      "n": 3
+    },
+    "rollout_ms_per_longest_token": {
+      "mean": 4.255666351996528,
+      "stdev": 0.0533685992826387,
+      "min": 4.219009385091145,
+      "max": 4.316894805989583,
+      "n": 3
+    },
+    "rollout_tokens_per_s": {
+      "mean": 17533.544450719157,
+      "stdev": 100.79569705418805,
+      "min": 17417.370470622725,
+      "max": 17597.75331189105,
+      "n": 3
+    },
+    "slot_occupancy": {
+      "mean": 0.5829599168565539,
+      "stdev": 0.009557459907021507,
+      "min": 0.5740941365559896,
+      "max": 0.5930843353271484,
+      "n": 3
+    },
+    "step_time_mean_s": {
+      "mean": 3.9578793608888887,
+      "stdev": 0.04435348080318062,
+      "min": 3.9320154998125,
+      "max": 4.009093490645833,
+      "n": 3
+    },
+    "step_time_stdev_s": {
+      "mean": 0.13547791619038627,
+      "stdev": 0.009912582188774364,
+      "min": 0.12470517424488131,
+      "max": 0.14421396011446927,
+      "n": 3
+    },
+    "steps_kept": {
+      "mean": 48.0,
+      "stdev": 0.0,
+      "min": 48.0,
+      "max": 48.0,
+      "n": 3
+    },
+    "steps_profiled": {
+      "mean": 0.0,
+      "stdev": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 3
+    },
+    "steps_total": {
+      "mean": 50.0,
+      "stdev": 0.0,
+      "min": 50.0,
+      "max": 50.0,
+      "n": 3
+    },
+    "sub_buckets.backward.mean_s_per_step": {
+      "mean": 1.310817712763889,
+      "stdev": 0.013878936448243485,
+      "min": 1.3021376236041666,
+      "max": 1.3268246727916666,
+      "n": 3
+    },
+    "sub_buckets.loss_forward.mean_s_per_step": {
+      "mean": 0.6116707923611111,
+      "stdev": 0.006888164485254875,
+      "min": 0.6075703853958333,
+      "max": 0.6196232671875,
+      "n": 3
+    },
+    "sub_buckets.old_logprob.mean_s_per_step": {
+      "mean": 0.58572116525,
+      "stdev": 0.007210337864432477,
+      "min": 0.580960242375,
+      "max": 0.594016792125,
+      "n": 3
+    },
+    "sync.mean_s_per_sync": {
+      "mean": 0.18757434075,
+      "stdev": 0.0008429142717579142,
+      "min": 0.1869218570625,
+      "max": 0.18852604502083334,
+      "n": 3
+    },
+    "sync.steps_with_sync": {
+      "mean": 48.0,
+      "stdev": 0.0,
+      "min": 48.0,
+      "max": 48.0,
+      "n": 3
+    },
+    "truncated_frac_mean": {
+      "mean": 0.11083984375,
+      "stdev": 0.003722199422535566,
+      "min": 0.10660807291666667,
+      "max": 0.11360677083333333,
+      "n": 3
+    },
+    "warmup_dropped": {
+      "mean": 2.0,
+      "stdev": 0.0,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 3
+    },
+    "zero_signal_group_frac_mean": {
+      "mean": 0.07118055555555557,
+      "stdev": 0.00542100520694305,
+      "min": 0.06510416666666667,
+      "max": 0.07552083333333333,
+      "n": 3
+    }
+  }
+}
