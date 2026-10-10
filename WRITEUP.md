@@ -1,11 +1,30 @@
 # Where does GRPO training time go? A rollout-infrastructure profile
 
-> **Status: in progress.** E1 is complete. Sections for experiments not yet run say
-> TODO. Every number traces to a file in `results/`; nothing here is estimated.
+> **Status:** E0–E4 complete. E5 (stretch) pending. Every number traces to a file in
+> `results/`; nothing here is estimated.
 
 ## Summary
 
-TODO after E1–E4.
+I ran GRPO (a reinforcement-learning method that scores several sampled answers per
+question and pushes the model toward the better ones) on GSM8K math with a 1.5B model,
+using TRL with vLLM sharing one H100, and timed every stage of every training step.
+Five findings, each from repeated runs:
+
+1. **Rollout was a third of the step, not most of it.** At baseline, generating answers
+   took 33 % of a 2.27 s step; the trainer side (a scoring pass, loss, and backward)
+   took 57 % (E1).
+2. **Weight sync is idle time.** Copying weights into vLLM cost 0.18 s per sync (8 % of
+   the step), and the GPU was busy for 2 % of it (E1, E4).
+3. **Rollout time follows the longest answer.** Raising the length cap from 128 to 512
+   made answers 2.2× longer on average but rollout 3.0× slower; at 512, only 40 % of
+   decode slots produced a token (E3).
+4. **Bigger batches are cheap to generate.** 4× the samples per step cost 1.66× the
+   rollout time, while the trainer side scaled linearly (E2).
+5. **Syncing less often trades speed for staleness.** Every 16 steps instead of every
+   step saved 7.6 % of step time; learning looked slower, though 3 reps do not settle
+   it (E4).
+
+The instrumentation itself cost 0.4 % of step time (E0).
 
 ## 1. Setup
 
@@ -328,10 +347,10 @@ shows rollout's share rising with length).
 
 ## 8. Interview questions this study answers
 
-| Question | Where the answer lives |
-|---|---|
-| In GRPO post-training, where does the time go, and why? | §3 (E1) |
-| How do samples-per-prompt and generation length change rollout cost? | §4 (E2), §5 (E3) |
-| What does trainer→sampler weight sync cost when they share one GPU, and is the GPU idle during it? | §6 (E4) |
-| How do you time GPU work correctly when kernels run asynchronously? | §2, `tests/test_timing.py` |
-| If you were building a rollout system, what would you change first, and what evidence says so? | §7 |
+| Question | Short answer | Where |
+|---|---|---|
+| In GRPO post-training, where does the time go, and why? | At this scale, trainer-side compute (57 %) more than rollout (33 %); rollout grows with answer length | §3 (E1), §5 (E3) |
+| How do group size and generation length change rollout cost? | Sub-linear in batch size (memory-bound decode); set by the longest sample, not the mean | §4 (E2), §5 (E3) |
+| What does trainer→sampler weight sync cost on one GPU, and is the GPU idle during it? | 0.18 s per sync, GPU busy 2 %; fixed per sync, so less frequent sync trades speed for staleness | §3 (E1), §6 (E4) |
+| How do you time GPU work correctly when kernels run asynchronously? | Synchronize at every stage boundary, charge exclusive time, and check the overhead (0.4 %); use kernel traces, not NVML, for sub-second stages | §2 (E0), §3, `tests/test_timing.py` |
+| If you were building a rollout system, what would you change first, and why? | Bulk weight sync, then slot refill for long-tail generation; both are sized by measurements here | §7 |
