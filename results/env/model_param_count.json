@@ -1,0 +1,18 @@
+{
+ "model": "Qwen/Qwen2.5-1.5B-Instruct",
+ "tie_word_embeddings": true,
+ "named_parameters": 338,
+ "num_params": 1543714304,
+ "bytes_bf16": 3087428608,
+ "bytes_fp32": 6174857216,
+ "largest": [
+  [
+   233373696,
+   "model.embed_tokens.weight"
+  ],
+  [
+   13762560,
+   "model.layers.9.mlp.up_proj.weight"
+  ]
+ ]
+}
