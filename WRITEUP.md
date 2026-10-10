@@ -179,6 +179,8 @@ model nothing.
   fixed cost: per decode position of the longest sample, a step took 2.6 ms at 32
   sequences, 3.0 ms at 64, and 4.3 ms at 128 (`rollout_ms_per_longest_token`). As in
   E3, the longest sample (about 253–256 tokens in every arm) sets the number of steps.
+  *(The memory-traffic explanation is an inference from this sub-linear scaling; I did
+  not measure memory bandwidth with hardware counters.)*
 - *Training is linear.* The loss forward and backward process every token of every
   completion, and the micro-batch size is fixed at 8, so doubling completions doubles
   the number of micro-batches: 0.649 → 1.304 → 2.601 s.
