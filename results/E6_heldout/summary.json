@@ -8,28 +8,30 @@
  "arms": {
   "trained_125": {
    "strict_accuracy": {
-    "mean": 0.74,
-    "stdev": null,
-    "min": 0.74,
+    "mean": 0.7116666666666666,
+    "stdev": 0.025658007197234444,
+    "min": 0.69,
     "max": 0.74,
-    "n": 1
+    "n": 3
    },
    "lenient_accuracy": {
-    "mean": 0.735,
-    "stdev": null,
-    "min": 0.735,
+    "mean": 0.71,
+    "stdev": 0.02291287847477922,
+    "min": 0.69,
     "max": 0.735,
-    "n": 1
+    "n": 3
    },
    "format_rate": {
-    "mean": 0.985,
-    "stdev": null,
-    "min": 0.985,
+    "mean": 0.9816666666666666,
+    "stdev": 0.005773502691896263,
+    "min": 0.975,
     "max": 0.985,
-    "n": 1
+    "n": 3
    },
    "reps": [
-    "trained_125/rep0"
+    "trained_125/rep0",
+    "trained_125/rep1",
+    "trained_125/rep2"
    ],
    "paired_vs_base": {
     "strict": [
@@ -38,6 +40,18 @@
       "lost": 5,
       "net": 102,
       "mcnemar_p": 5.415668049444863e-26
+     },
+     {
+      "gained": 102,
+      "lost": 7,
+      "net": 95,
+      "mcnemar_p": 9.843629219925344e-23
+     },
+     {
+      "gained": 99,
+      "lost": 7,
+      "net": 92,
+      "mcnemar_p": 6.454479575071315e-22
      }
     ],
     "lenient": [
@@ -46,6 +60,18 @@
       "lost": 14,
       "net": 15,
       "mcnemar_p": 0.03153949735315109
+     },
+     {
+      "gained": 23,
+      "lost": 14,
+      "net": 9,
+      "mcnemar_p": 0.18774155899882317
+     },
+     {
+      "gained": 23,
+      "lost": 17,
+      "net": 6,
+      "mcnemar_p": 0.42959050784338615
      }
     ]
    }
