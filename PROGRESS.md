@@ -140,3 +140,14 @@ Newest entries at the bottom. Rules:
   the longest sample), so a 2.2× longer mean answer cost 3.0× the rollout time and 29 %
   of the throughput. Weight sync is unchanged at 0.179 s, so its share falls as steps
   get longer.
+- **E2 results** (job 13930287, 3 reps per arm; `results/E2_group_size/*/arm_summary.json`).
+  B = 8 prompts fixed, so completions per step are 32 / 64 / 128:
+  | G | step s | rollout s | trainer-side s | tok/s | rollout % | zero-signal groups |
+  |---|---|---|---|---|---|---|
+  | 4 | 1.517 ± 0.012 | 0.655 | 0.649 | 6,600 ± 639 | 43.2 | 20.6 % |
+  | 8 | 2.291 ± 0.029 | 0.765 | 1.304 | 11,179 ± 143 | 33.4 | 10.2 % |
+  | 16 | 3.958 ± 0.044 | 1.089 | 2.601 | 17,534 ± 101 | 27.5 | 7.1 % |
+  4× the completions cost 1.66× the rollout time (2.66× the throughput); the
+  trainer side scaled 2.0× per doubling. G8 reproduces E1's baseline from another job
+  (2.291 vs 2.266 s per step, 1.1 % apart). G4 rep0 ran at git `bd0d33a` and the other
+  8 runs at `c7605be` (the port fix only; no change to measured code paths).
