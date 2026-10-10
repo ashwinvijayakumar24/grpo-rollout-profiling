@@ -150,10 +150,44 @@ not chase accuracy.
 
 ## 4. E2: Rollout throughput vs samples per prompt
 
-![E2 throughput](results/figures/E2_throughput.png)
+**Result: 4× more samples per step cost only 1.66× more rollout time, because decode
+gets cheaper per token as the batch grows. The training side scales linearly, so
+bigger groups shift the bottleneck further toward training.**
 
-TODO: tokens/s at G = 4, 8, 16; how the rollout share changes; mechanism (batch size
-in vLLM's continuous batching, prefix sharing across a group's identical prompts).
+Source: `results/E2_group_size/{G4,G8,G16}/arm_summary.json` (job 13930287, arms
+interleaved on one GPU, 3 reps each). Prompts per step stay at 8, so G = 4, 8, 16
+means 32, 64, 128 completions per step.
+
+![E2 throughput](results/figures/E2_throughput.png)
+![E2 breakdown](results/figures/E2_breakdown.png)
+
+| G | Completions | Step (s) | Rollout (s) | Trainer side (s) | Generated tok/s | Rollout share | Zero-signal groups |
+|---|---|---|---|---|---|---|---|
+| 4 | 32 | 1.517 ± 0.012 | 0.655 ± 0.010 | 0.649 ± 0.004 | 6,600 ± 639 | 43.2 % | 20.6 % |
+| 8 | 64 | 2.291 ± 0.029 | 0.765 ± 0.015 | 1.304 ± 0.014 | 11,179 ± 143 | 33.4 % | 10.2 % |
+| 16 | 128 | 3.958 ± 0.044 | 1.089 ± 0.014 | 2.601 ± 0.030 | 17,534 ± 101 | 27.5 % | 7.1 % |
+
+"Trainer side" is the `advantage_loss` bucket. A *zero-signal group* is a prompt whose
+G samples all got the same reward, so all their advantages are zero and they teach the
+model nothing.
+
+**Mechanism.**
+
+- *Rollout is sub-linear.* Each decode step reads all 3 GB of weights from GPU memory
+  whether it advances 32 sequences or 128, so at these batch sizes a decode step's cost
+  is dominated by memory traffic, not arithmetic. More sequences per step share that
+  fixed cost: per decode position of the longest sample, a step took 2.6 ms at 32
+  sequences, 3.0 ms at 64, and 4.3 ms at 128 (`rollout_ms_per_longest_token`). As in
+  E3, the longest sample (about 253–256 tokens in every arm) sets the number of steps.
+- *Training is linear.* The loss forward and backward process every token of every
+  completion, and the micro-batch size is fixed at 8, so doubling completions doubles
+  the number of micro-batches: 0.649 → 1.304 → 2.601 s.
+- *Larger groups waste fewer samples.* With G = 4, 20.6 % of groups had no learning
+  signal; with G = 16, 7.1 %. Larger G costs more trainer time per step but makes more
+  of the generated samples useful.
+
+**Reproducibility.** The G8 arm is the same configuration as E1's baseline, run in a
+different job: 2.291 ± 0.029 s per step here vs 2.266 ± 0.014 s in E1 (1.1 % apart).
 
 ## 5. E3: Generation-length cap
 
