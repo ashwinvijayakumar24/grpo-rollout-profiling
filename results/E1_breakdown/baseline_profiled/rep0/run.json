@@ -80,5 +80,11 @@
       "cudnn": 92000
     }
   },
-  "experiment": "E1_breakdown"
+  "experiment": "E1_breakdown",
+  "finished_unix": 1791600702.759889,
+  "status": "completed",
+  "setup_s": 21.276083645003382,
+  "train_s": 160.89173238401418,
+  "device": "cuda",
+  "cuda_max_memory_allocated": 55063493120
 }
