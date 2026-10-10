@@ -106,3 +106,20 @@ Newest entries at the bottom. Rules:
   `results/E0_overhead.failed-13930285`; E0 resubmitted in full.
 - **E1 timing reps completed** (job 13930286, all 3 reps; the profiled arm was still
   running at the time of this entry).
+- **E1 baseline results** (job 13930286, git `bd0d33a`, H100 80GB HBM3 on
+  atl1-1-03-008-27-0, 3 reps × 50 steps, first 2 steps dropped). Source:
+  `results/E1_breakdown/baseline/arm_summary.json`. Mean ± stdev across reps:
+  - Step time 2.266 ± 0.014 s.
+  - Shares: rollout_gen 33.2 ± 0.4 %, advantage_loss 57.1 ± 0.5 %, weight_sync
+    7.8 ± 0.1 %, optimizer_step 0.8 %, other 1.1 %, reward < 0.1 %.
+  - Inside advantage_loss per step: backward 0.653 s, loss forward 0.301 s,
+    old-log-prob pass 0.298 s.
+  - Weight sync 0.178 ± 0.001 s per sync (every step).
+  - Rollout 11,383 ± 296 generated tokens/s; mean completion 134 tokens; 9.8 % of
+    completions hit the 256-token cap.
+  - Training-batch correctness rose from 0.309 (first 10 steps) to 0.588 (last 10).
+    This is the per-step batch, not a held-out evaluation.
+  - Open question: NVML reports about 80 % GPU utilization inside weight-sync spans,
+    while the smoke run's profiler measured about 2 % busy. NVML averages over up to
+    1 s, longer than the 0.18 s sync, so it likely includes the backward pass before
+    it. The E1 profiled arm decides this.
