@@ -123,3 +123,11 @@ Newest entries at the bottom. Rules:
     while the smoke run's profiler measured about 2 % busy. NVML averages over up to
     1 s, longer than the 0.18 s sync, so it likely includes the backward pass before
     it. The E1 profiled arm decides this.
+- **E1 profiled arm** (same job, steps 20–21 under torch.profiler;
+  `results/E1_breakdown/baseline_profiled/rep0/profile_busy.json`). Fraction of each
+  span with any GPU kernel/memcpy/memset running: weight_sync **2.0 %** (7.1 ms of
+  kernels across two syncs totalling 0.362 s), rollout_gen 65.7 %, old_logprob 83.4 %,
+  loss_forward 75.4 %, backward 90.5 %, optimizer_step 93.2 %. This resolves the open
+  question above: NVML's ~80 % during sync was its averaging window, not GPU work.
+  Caveat: the profiler adds CPU overhead (profiled rollout ≈ 0.93 s/step vs 0.75 s
+  unprofiled), so idle fractions of CPU-heavy spans are upper bounds.
