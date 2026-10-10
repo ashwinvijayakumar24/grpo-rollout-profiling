@@ -1,0 +1,105 @@
+{
+  "run_dir": "E3_gen_length/len128/rep1",
+  "experiment": "E3_gen_length",
+  "config_hash": "906339ec5e341760",
+  "git_sha": "c7605be626eea283b7a62d5fbf3690ac64731246",
+  "slurm_job": "13930288",
+  "gpu": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "status": "completed",
+  "steps_total": 50,
+  "steps_kept": 48,
+  "steps_profiled": 0,
+  "warmup_dropped": 2,
+  "step_time_mean_s": 1.6386748217916667,
+  "step_time_stdev_s": 0.05986605008258892,
+  "buckets": {
+    "rollout_gen": {
+      "mean_s_per_step": 0.4250818511875,
+      "share": 0.2594058598659197
+    },
+    "reward": {
+      "mean_s_per_step": 0.0005892558333333333,
+      "share": 0.00035959290122555414
+    },
+    "advantage_loss": {
+      "mean_s_per_step": 0.9919290910625,
+      "share": 0.605323934847526
+    },
+    "optimizer_step": {
+      "mean_s_per_step": 0.0172482809375,
+      "share": 0.010525749653394543
+    },
+    "weight_sync": {
+      "mean_s_per_step": 0.1787795440625,
+      "share": 0.10910007384322232
+    },
+    "other": {
+      "mean_s_per_step": 0.025046798708333318,
+      "share": 0.01528478888871196
+    }
+  },
+  "sub_buckets": {
+    "backward": {
+      "mean_s_per_step": 0.497535545875
+    },
+    "loss_forward": {
+      "mean_s_per_step": 0.231898571125
+    },
+    "old_logprob": {
+      "mean_s_per_step": 0.21804881952083333
+    }
+  },
+  "rollout_tokens_per_s": 12512.835238219826,
+  "rollout_completions_per_s": 150.55923893530365,
+  "completion_tokens_per_step": 5318.979166666667,
+  "completion_len_mean": 83.10904947916667,
+  "truncated_frac_mean": 0.24479166666666666,
+  "zero_signal_group_frac_mean": 0.08854166666666667,
+  "sync": {
+    "steps_with_sync": 48,
+    "mean_s_per_sync": 0.1787795440625
+  },
+  "reward": {
+    "window": 10,
+    "reward_first": 0.20406251028180122,
+    "reward_last": 0.563125017285347,
+    "correct_first": 0.175,
+    "correct_last": 0.4765625
+  },
+  "nvml_util_by_span": {
+    "weight_sync": {
+      "mean_util_gpu_pct": 80.39156626506023,
+      "samples": 166
+    },
+    "rollout_gen": {
+      "mean_util_gpu_pct": 43.6275,
+      "samples": 400
+    },
+    "old_logprob": {
+      "mean_util_gpu_pct": 85.66350710900474,
+      "samples": 211
+    },
+    "reward": {
+      "mean_util_gpu_pct": 79.0,
+      "samples": 1
+    },
+    "loss_forward": {
+      "mean_util_gpu_pct": 91.71861471861472,
+      "samples": 231
+    },
+    "backward": {
+      "mean_util_gpu_pct": 92.68697478991596,
+      "samples": 476
+    },
+    "advantage_loss": {
+      "mean_util_gpu_pct": 77.0683930942895,
+      "samples": 1506
+    },
+    "optimizer_step": {
+      "mean_util_gpu_pct": 93.63636363636364,
+      "samples": 11
+    }
+  }
+}
