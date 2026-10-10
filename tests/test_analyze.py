@@ -21,6 +21,7 @@ def fake_step(step, rollout=3.0, reward=0.1, adv=1.0, opt=0.2, sync=0.0, other=0
         "timing_enabled": True,
         "metrics": {
             "completions": 64, "completion_tokens": tokens, "completion_len_mean": tokens / 64,
+            "completion_len_max": 50,
             "truncated_frac": 0.0, "zero_signal_group_frac": 0.25, "reward_mean": r,
             "reward/correctness_reward": r, "weight_synced": sync > 0,
         },
@@ -111,3 +112,10 @@ def test_profiled_steps_are_excluded_from_timing():
     assert s["steps_kept"] == 3
     assert s["steps_profiled"] == 1
     assert s["buckets"]["rollout_gen"]["mean_s_per_step"] == pytest.approx(3.0)
+
+
+def test_tail_metrics():
+    s = summarize_run({}, [fake_step(i, rollout=2.0, tokens=1600) for i in range(4)], warmup=0)
+    assert s["completion_len_max_mean"] == 50
+    assert s["slot_occupancy"] == pytest.approx(1600 / (64 * 50))
+    assert s["rollout_ms_per_longest_token"] == pytest.approx(40.0)

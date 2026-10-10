@@ -83,6 +83,18 @@ def summarize_run(header: dict, steps: list[dict], warmup: int = WARMUP_STEPS) -
         "rollout_completions_per_s": completions / gen_time if gen_time > 0 else None,
         "completion_tokens_per_step": gen_tokens / n,
         "completion_len_mean": _mean([x["completion_len_mean"] for x in m if "completion_len_mean" in x]),
+        # Decode runs until the longest sample finishes, so the longest sample, not the
+        # mean, sets rollout time. Slot occupancy = generated tokens / (samples x longest):
+        # the fraction of the batch's decode slots doing useful work.
+        "completion_len_max_mean": _mean([x["completion_len_max"] for x in m if "completion_len_max" in x]),
+        "slot_occupancy": _mean([
+            x["completion_tokens"] / (x["completions"] * x["completion_len_max"])
+            for x in m if x.get("completion_len_max")
+        ]),
+        "rollout_ms_per_longest_token": _mean([
+            1000 * s["buckets"]["rollout_gen"] / s["metrics"]["completion_len_max"]
+            for s in kept if s["metrics"].get("completion_len_max")
+        ]),
         "truncated_frac_mean": _mean([x["truncated_frac"] for x in m if "truncated_frac" in x]),
         "zero_signal_group_frac_mean": _mean([x["zero_signal_group_frac"] for x in m if "zero_signal_group_frac" in x]),
         "sync": {

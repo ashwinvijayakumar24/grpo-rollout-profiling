@@ -55,6 +55,9 @@
   "rollout_completions_per_s": 50.351887836358095,
   "completion_tokens_per_step": 11686.833333333334,
   "completion_len_mean": 182.60677083333334,
+  "completion_len_max_mean": 450.125,
+  "slot_occupancy": 0.41047174648047635,
+  "rollout_ms_per_longest_token": 2.830234041764031,
   "truncated_frac_mean": 0.009765625,
   "zero_signal_group_frac_mean": 0.11979166666666667,
   "sync": {
