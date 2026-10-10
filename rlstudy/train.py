@@ -125,7 +125,26 @@ def build_grpo_config(config: dict, out_dir: Path):
     )
 
 
+def _claim_rendezvous_port() -> None:
+    """Give this run its own torch.distributed rendezvous port.
+
+    vLLM in colocate mode sets up a one-process torch.distributed group. Unless
+    MASTER_PORT is already set, something in start-up defaults it to 29500, so two
+    runs on one node (two Slurm jobs sharing it) both bind 29500 and one dies with
+    EADDRINUSE (E0, job 13930285). Pick a free port first; TRL respects it.
+    """
+    import socket
+
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
+    os.environ["MASTER_ADDR"] = "127.0.0.1"
+    os.environ["MASTER_PORT"] = str(port)
+
+
 def run(config: dict, out_dir: Path) -> Path:
+    if "MASTER_PORT" not in os.environ:
+        _claim_rendezvous_port()
     import torch
 
     from rlstudy.data import as_hf_dataset
