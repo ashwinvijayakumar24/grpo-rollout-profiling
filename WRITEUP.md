@@ -285,10 +285,46 @@ a sync step for both schedules). vLLM sleep mode was off in every arm (NOTES.md 
 
 ## 7. What I'd build differently in a rollout system
 
-Every claim cites the experiment that supports it. Claims not directly measured are
-marked *(speculative)*.
+Every claim cites the experiment that supports it. Anything not directly measured is
+marked *(speculative)*. Scope caveat for all of them: one H100, a 1.5B model, short
+math answers (mean 134 tokens at the baseline cap). At larger models or longer
+reasoning traces the balance between rollout and training will differ (E3 already
+shows rollout's share rising with length).
 
-TODO after E1–E4.
+1. **Make weight sync a bulk transfer, not a per-tensor loop.** A sync took 0.18 s, and
+   the GPU was busy for only 2 % of it, about 3.5 ms of real work (E1, E4). The cost
+   comes from pushing 338 tensors one call at a time, not from moving 3 GB. I would
+   pack the weights into one contiguous buffer, or at least batch them into a single
+   `load_weights` call, and measure the sync again. *(Speculative: the expected saving
+   is the gap between 180 ms and the ~3.5 ms of GPU work; not built here.)*
+2. **Measure staleness before trading it for speed.** Syncing less often saved 7.6 % of
+   step time but appeared to slow learning (E4). Any asynchronous or off-policy rollout
+   design should log, per step, how many optimizer steps old the sampler's weights are
+   (this study's `sampler_staleness` metric) next to reward, so the speed/quality
+   trade is visible instead of assumed. Fix (1) first: a cheap sync removes most of the
+   reason to sync less often. *(The combination is speculative.)*
+3. **Schedule rollouts around the longest sample.** Rollout time tracks the longest
+   completion, and at a 512-token cap only 40 % of decode slots produced a token (E3).
+   I would refill freed slots with new prompts while long samples finish, or bucket
+   prompts by expected length, instead of waiting for the slowest sample in a fixed
+   batch. *(Speculative: the measured occupancy bounds the opportunity; the remedies
+   were not built.)*
+4. **Generate in bigger batches; the GPU has room.** Four times the completions per step
+   cost only 1.66× the rollout time (E2), and larger groups also wasted fewer samples
+   on zero-advantage groups (20.6 % at G = 4 vs 7.1 % at G = 16). For a fixed budget I
+   would push batch size up before adding rollout hardware.
+5. **At this scale, optimize the trainer side first.** The scoring pass, loss forward,
+   and backward were 57 % of the step; rollout was 33 % (E1). Within that, 0.30 s per
+   step (13 %) is a no-grad forward that exists only because the sampler and trainer
+   compute slightly different probabilities (E1). A rollout system whose sampler
+   returns log-probs the trainer can trust (matched numerics) would remove that pass.
+   *(Speculative: E5 compares against HF generate, which has no such pass, as the
+   nearest available measurement.)*
+6. **Instrument with kernel traces, not utilization counters.** NVML reported 80 %
+   utilization during sync; kernel traces showed 2 % (E1). For any stage shorter than
+   a second, utilization counters describe the neighbouring stage. Timing that waits
+   for the GPU at each boundary cost only 0.4 % (E0), so there is little reason not to
+   leave it on.
 
 ## 8. Interview questions this study answers
 
