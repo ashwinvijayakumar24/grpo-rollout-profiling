@@ -10,3 +10,4 @@ data/raw/
 scratch/
 profile_trace.json.gz
 hf_trainer/
+results/**/*.log
