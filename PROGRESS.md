@@ -151,3 +151,7 @@ Newest entries at the bottom. Rules:
   trainer side scaled 2.0× per doubling. G8 reproduces E1's baseline from another job
   (2.291 vs 2.266 s per step, 1.1 % apart). G4 rep0 ran at git `bd0d33a` and the other
   8 runs at `c7605be` (the port fix only; no change to measured code paths).
+- **E0 results** (job 13931400, git `c7605be`, 3 seed-paired reps per arm;
+  `results/E0_overhead/overhead.json`): full instrumentation 2.271 ± 0.010 s/step vs
+  step-boundary-only 2.262 ± 0.012 s/step, **+0.40 %** mean paired difference
+  (0.59 %, 0.29 %, 0.32 % per seed). Both arms generated identical tokens per seed.
