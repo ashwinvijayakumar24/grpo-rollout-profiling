@@ -8,11 +8,21 @@ math with an exact-match reward, times every stage of every training step, and
 measures how the time split changes with group size, generation length, and
 weight-sync frequency.
 
-## Status
+## Results (H100 80GB, Qwen2.5-1.5B, TRL + vLLM colocated)
 
-Instrumentation, analysis, and experiment specs are built and tested locally
-(see [PROGRESS.md](PROGRESS.md)). GPU experiments run on Georgia Tech's PACE
-cluster; results land in `results/` and [WRITEUP.md](WRITEUP.md).
+![Where a GRPO step's time goes](results/figures/E1_breakdown.png)
+
+- Rollout was **33 %** of a 2.27 s step; trainer-side compute was **57 %** (E1).
+- Weight sync: **0.18 s** per sync with the GPU busy **2 %** of it (E1, E4).
+- Rollout time follows the longest sample: **40 %** decode-slot occupancy at a
+  512-token cap (E3).
+- 4× the samples per step cost **1.66×** the rollout time (E2).
+- vLLM generated **7.9×** faster than HF `generate` (E5).
+- Instrumentation overhead: **0.4 %** (E0).
+
+Full methodology, per-experiment mechanisms, and what I'd build differently:
+[WRITEUP.md](WRITEUP.md). Every number traces to a file in `results/`; the run log is
+[PROGRESS.md](PROGRESS.md).
 
 ## Layout
 
