@@ -1,0 +1,124 @@
+{
+ "base": {
+  "strict_accuracy": 0.23,
+  "lenient_accuracy": 0.66,
+  "format_rate": 0.335
+ },
+ "n_problems": 200,
+ "arms": {
+  "trained_125": {
+   "strict_accuracy": {
+    "mean": 0.74,
+    "stdev": null,
+    "min": 0.74,
+    "max": 0.74,
+    "n": 1
+   },
+   "lenient_accuracy": {
+    "mean": 0.735,
+    "stdev": null,
+    "min": 0.735,
+    "max": 0.735,
+    "n": 1
+   },
+   "format_rate": {
+    "mean": 0.985,
+    "stdev": null,
+    "min": 0.985,
+    "max": 0.985,
+    "n": 1
+   },
+   "reps": [
+    "trained_125/rep0"
+   ],
+   "paired_vs_base": {
+    "strict": [
+     {
+      "gained": 107,
+      "lost": 5,
+      "net": 102,
+      "mcnemar_p": 5.415668049444863e-26
+     }
+    ],
+    "lenient": [
+     {
+      "gained": 29,
+      "lost": 14,
+      "net": 15,
+      "mcnemar_p": 0.03153949735315109
+     }
+    ]
+   }
+  },
+  "trained_50": {
+   "strict_accuracy": {
+    "mean": 0.6683333333333333,
+    "stdev": 0.02466441431158126,
+    "min": 0.64,
+    "max": 0.685,
+    "n": 3
+   },
+   "lenient_accuracy": {
+    "mean": 0.6683333333333333,
+    "stdev": 0.02466441431158126,
+    "min": 0.64,
+    "max": 0.685,
+    "n": 3
+   },
+   "format_rate": {
+    "mean": 0.975,
+    "stdev": 0.013228756555322964,
+    "min": 0.96,
+    "max": 0.985,
+    "n": 3
+   },
+   "reps": [
+    "trained_50/rep0",
+    "trained_50/rep1",
+    "trained_50/rep2"
+   ],
+   "paired_vs_base": {
+    "strict": [
+     {
+      "gained": 90,
+      "lost": 8,
+      "net": 82,
+      "mcnemar_p": 1.0875246615051457e-18
+     },
+     {
+      "gained": 100,
+      "lost": 10,
+      "net": 90,
+      "mcnemar_p": 8.009521189255448e-20
+     },
+     {
+      "gained": 98,
+      "lost": 7,
+      "net": 91,
+      "mcnemar_p": 1.2065431169279858e-21
+     }
+    ],
+    "lenient": [
+     {
+      "gained": 19,
+      "lost": 23,
+      "net": -4,
+      "mcnemar_p": 0.6439689563703723
+     },
+     {
+      "gained": 26,
+      "lost": 21,
+      "net": 5,
+      "mcnemar_p": 0.5600646295802107
+     },
+     {
+      "gained": 24,
+      "lost": 20,
+      "net": 4,
+      "mcnemar_p": 0.651587827208914
+     }
+    ]
+   }
+  }
+ }
+}

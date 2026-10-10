@@ -26,3 +26,21 @@ def test_evaluate_end_to_end_hf(tmp_path):
     r = ev.evaluate("trl-internal-testing/tiny-Qwen2ForCausalLM-2.5", tmp_path, backend="hf", limit=3)
     assert r["n"] == 3 and len(r["items"]) == 3
     assert (tmp_path / "eval.json").exists()
+
+
+def test_mcnemar_exact():
+    from rlstudy.heldout_summary import mcnemar_exact
+
+    assert mcnemar_exact(0, 0) == 1.0
+    assert mcnemar_exact(5, 5) == 1.0
+    # 10 vs 0 discordant pairs: 2 * 0.5**10
+    assert mcnemar_exact(10, 0) == pytest.approx(2 / 1024)
+
+
+def test_paired_counts_flips():
+    from rlstudy.heldout_summary import paired
+
+    base = {"items": [{"id": "a", "lenient": False}, {"id": "b", "lenient": True}, {"id": "c", "lenient": True}]}
+    new = {"items": [{"id": "a", "lenient": True}, {"id": "b", "lenient": False}, {"id": "c", "lenient": True}]}
+    r = paired(base, new, "lenient")
+    assert (r["gained"], r["lost"], r["net"]) == (1, 1, 0)
