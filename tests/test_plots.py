@@ -20,3 +20,10 @@ def test_plots_render(tmp_path):
     p3 = reward_curve(sorted((exp / "G8").glob("rep*")), tmp_path / "r.png", "Synthetic reward")
     for p in (p1, p2, p3):
         assert p.stat().st_size > 5000
+
+
+def test_arm_order_is_natural():
+    from rlstudy.plots import _natural_key
+
+    assert sorted(["G16", "G4", "G8"], key=_natural_key) == ["G4", "G8", "G16"]
+    assert sorted(["sync16", "sync1", "sync4"], key=_natural_key) == ["sync1", "sync4", "sync16"]
