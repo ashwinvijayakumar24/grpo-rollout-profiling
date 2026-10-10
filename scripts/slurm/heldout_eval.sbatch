@@ -3,7 +3,8 @@
 # split (from GSM8K test). One allocation, so every model is scored on the same GPU.
 #   base model                          -> results/E6_heldout/base
 #   E1 baseline config, 50 steps, seeds 0-2 -> results/E6_heldout/trained_50/rep{0,1,2}
-#   same config, 125 steps (1 epoch), seed 0 -> results/E6_heldout/trained_125/rep0  (exploratory, n=1)
+#   same config, 125 steps (1 epoch), seeds 0-2 -> results/E6_heldout/trained_125/rep{0,1,2}
+#   (seed 0 first ran in job 13943559; seeds 1-2 added after its lenient gain needed confirming)
 # Resumable: a model whose eval.json exists is skipped. Checkpoints go to project
 # storage, not git.
 #SBATCH --job-name=grpo-E6_heldout
@@ -50,6 +51,8 @@ for s in 0 1 2; do
     train 50 "$s" "$OUT/train_runs/steps50_rep$s" "$CKPT/steps50_rep$s"
     evaluate "$CKPT/steps50_rep$s" "$OUT/trained_50/rep$s" "trained_50_seed$s"
 done
-train 125 0 "$OUT/train_runs/steps125_rep0" "$CKPT/steps125_rep0"
-evaluate "$CKPT/steps125_rep0" "$OUT/trained_125/rep0" trained_125_seed0
+for s in 0 1 2; do
+    train 125 "$s" "$OUT/train_runs/steps125_rep$s" "$CKPT/steps125_rep$s"
+    evaluate "$CKPT/steps125_rep$s" "$OUT/trained_125/rep$s" "trained_125_seed$s"
+done
 echo E6_DONE
