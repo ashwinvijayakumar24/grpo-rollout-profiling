@@ -184,3 +184,12 @@ Newest entries at the bottom. Rules:
   steps × seeds 0–2; 125 steps (one pass over the training set) × seed 0, exploratory.
 - PACE's untracked copy of E5 results (identical to the committed files) was moved to
   `~/ps-simpliearn-0/grpo_results_backup/` so the checkout could pull.
+- **E6 job 13943559 failed** at vLLM start-up (FlashInfer JIT needs `ninja`, installed
+  in the env but not on PATH). Fixed in `c8cd6ed` for both job scripts; resubmitted.
+- **E6 results** (jobs 13943559 rerun and 13944626; `results/E6_heldout/summary.json`):
+  base strict 23.0 % / lenient 66.0 % / format 33.5 %; 50 steps (3 seeds) 66.8 ± 2.5 %
+  / 66.8 ± 2.5 % / 97.5 %; 125 steps (3 seeds) 71.2 ± 2.6 % / 71.0 ± 2.3 % / 98.2 %.
+  Strict gains significant in every seed (paired McNemar p < 1e-17). Lenient gain only
+  after a full epoch: positive in 3/3 seeds, significant alone in 1/3 (p = 0.03, 0.19,
+  0.43). Conclusion: the training mostly taught the answer format; the math gain is
+  modest.

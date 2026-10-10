@@ -1,6 +1,6 @@
 # Where does GRPO training time go? A rollout-infrastructure profile
 
-> **Status:** complete (E0–E5). Every number traces to a file in `results/`; nothing
+> **Status:** complete (E0–E6). Every number traces to a file in `results/`; nothing
 > here is estimated.
 
 ## Summary
@@ -26,7 +26,9 @@ Five findings, each from repeated runs:
 
 The instrumentation itself cost 0.4 % of step time (E0). As a stretch (E5), vLLM
 generated 7.9× faster than HF `generate`, making the step 3.1× faster despite the sync
-and correction pass it adds.
+and correction pass it adds. On 200 held-out test problems (E6), one epoch of GRPO
+raised strict-format accuracy from 23 % to 71 %; most of that was learning the answer
+format, and format-agnostic accuracy rose a modest 5 points (66 % → 71 %).
 
 ## 1. Setup
 
@@ -343,7 +345,54 @@ The chart shows shares; note that the HF step is 3.1× longer in absolute time.
 third time: 2.278 s here, 2.266 s in E1 (job 13930286), 2.291 s in E2 (job 13930287),
 within 1.1 % of each other.
 
-## 8. What I'd build differently in a rollout system
+## 8. E6: Held-out accuracy before and after training
+
+**Result: on 200 held-out GSM8K test problems, GRPO raised accuracy under the
+training's strict answer format from 23 % to 71 % in one pass over the training data.
+Most of that is the model learning the format; format-agnostic accuracy rose a modest
+5 points, from 66 % to 71 %.**
+
+Source: `results/E6_heldout/summary.json` (jobs 13943559 and 13944626, one H100; built
+by `python -m rlstudy.heldout_summary`), with every individual answer in each model's
+`eval.json`. The 200 problems come from GSM8K's test split and were never trained on
+(`data/gsm8k_subset/manifest.json`). Decoding is greedy, one answer per problem, with a
+512-token budget. Training used E1's baseline configuration.
+
+| Model | Strict accuracy | Format-agnostic accuracy | Format rate |
+|---|---|---|---|
+| Base Qwen2.5-1.5B-Instruct | 23.0 % | 66.0 % | 33.5 % |
+| GRPO, 50 steps (3 seeds) | 66.8 ± 2.5 % | 66.8 ± 2.5 % | 97.5 ± 1.3 % |
+| GRPO, 125 steps = 1 epoch (3 seeds) | 71.2 ± 2.6 % | 71.0 ± 2.3 % | 98.2 ± 0.6 % |
+
+- *Strict* is the training reward: the number after the last `####` must be correct.
+- *Format-agnostic* (lenient) accepts the last number anywhere in the answer.
+- *Format rate* is the share of answers ending in a well-formed `#### <number>` line.
+
+**Paired tests against the base model** (same 200 problems; exact McNemar test on
+problems that flipped):
+
+| Model | Strict: gained / lost (p) | Format-agnostic: gained / lost (p) |
+|---|---|---|
+| 50 steps, seeds 0/1/2 | +90/−8, +100/−10, +98/−7 (all p < 10⁻¹⁷) | +19/−23 (0.64), +26/−21 (0.56), +24/−20 (0.65) |
+| 125 steps, seeds 0/1/2 | +107/−5, +102/−7, +99/−7 (all p < 10⁻²¹) | +29/−14 (0.03), +23/−14 (0.19), +23/−17 (0.43) |
+
+**Interpretation.**
+
+- *The base model could already do most of this math; it did not follow the answer
+  format.* It got 66 % right by the lenient rule but wrote the required `####` line only
+  33.5 % of the time. GRPO's reward pays only for correct answers in that format, so the
+  first thing training learns is the format: by 50 steps, 97.5 % of answers use it, and
+  strict accuracy matches lenient accuracy.
+- *Better math came later and is modest.* At 50 steps the format-agnostic flips are
+  balanced (no gain). After a full epoch, all three seeds gained more problems than they
+  lost (net +15, +9, +6), for a mean of 71.0 % vs 66.0 %, but only one seed's gain is
+  significant on its own. With 200 problems, one problem is 0.5 points, so I report this
+  as a consistent but modest improvement, not an established one.
+- *Why this matters for the systems study.* The verifiable reward did its job, and the
+  loop trains a real policy improvement. It also shows why an accuracy number from RL
+  should always be split into format and content before it is quoted.
+
+## 9. What I'd build differently in a rollout system
 
 Every claim cites the experiment that supports it. Anything not directly measured is
 marked *(speculative)*. Scope caveat for all of them: one H100, a 1.5B model, short
