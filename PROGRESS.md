@@ -131,3 +131,12 @@ Newest entries at the bottom. Rules:
   question above: NVML's ~80 % during sync was its averaging window, not GPU work.
   Caveat: the profiler adds CPU overhead (profiled rollout ≈ 0.93 s/step vs 0.75 s
   unprofiled), so idle fractions of CPU-heavy spans are upper bounds.
+- **E3 results** (job 13930288, 3 reps per arm, one job; `results/E3_gen_length/*/arm_summary.json`):
+  | cap | step s | rollout % | rollout s | tok/s | mean len | longest len | slot occupancy | truncated |
+  |---|---|---|---|---|---|---|---|---|
+  | 128 | 1.632 ± 0.012 | 26.0 | 0.425 | 12,719 ± 198 | 84 | 128 | 0.659 | 25.4 % |
+  | 512 | 3.386 ± 0.078 | 38.2 | 1.294 | 9,077 ± 128 | 184 | 461 | 0.403 | 1.1 % |
+  Rollout time tracks the longest completion in the batch (2.8–3.3 ms per position of
+  the longest sample), so a 2.2× longer mean answer cost 3.0× the rollout time and 29 %
+  of the throughput. Weight sync is unchanged at 0.179 s, so its share falls as steps
+  get longer.

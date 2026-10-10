@@ -157,10 +157,44 @@ in vLLM's continuous batching, prefix sharing across a group's identical prompts
 
 ## 5. E3: Generation-length cap
 
+**Result: raising the cap from 128 to 512 tokens made answers 2.2× longer on average
+but made rollout 3.0× slower, because a batch generates until its longest answer
+finishes. At 512 tokens, rollout rises to 38 % of the step.**
+
+Source: `results/E3_gen_length/{len128,len512}/arm_summary.json` (job 13930288, both
+arms interleaved on one GPU, 3 reps each). The 256-token row is E1's baseline from a
+different job (13930286) on the same node type, so compare it with care.
+
 ![E3 breakdown](results/figures/E3_breakdown.png)
 
-TODO: rollout share at 128 vs 512 tokens; truncation rate at each cap; mechanism
-(decode is sequential per token; a batch waits for its longest sample).
+| Cap | Step (s) | Rollout share | Rollout (s) | Generated tok/s | Mean length | Longest length | Slot occupancy | Hit the cap |
+|---|---|---|---|---|---|---|---|---|
+| 128 | 1.632 ± 0.012 | 26.0 ± 0.1 % | 0.425 | 12,719 ± 198 | 84 | 128 | 0.66 | 25.4 % |
+| 256 (E1) | 2.266 ± 0.014 | 33.2 ± 0.4 % | 0.752 | 11,383 ± 296 | 134 | 255 | 0.53 | 9.8 % |
+| 512 | 3.386 ± 0.078 | 38.2 ± 0.2 % | 1.294 | 9,077 ± 128 | 184 | 461 | 0.40 | 1.1 % |
+
+*Slot occupancy* is the generated tokens divided by (64 samples × the longest sample's
+length): the fraction of the batch's decode positions that produced a real token.
+
+**Mechanism.** vLLM generates all 64 samples together, one token per sample per decode
+step, and the round ends only when the longest sample finishes. So rollout time is
+set by the longest sample: 2.8–3.3 ms per decode position of the longest sample at
+every cap. As short answers finish, the batch thins out, and the remaining decode
+steps carry fewer sequences. At a cap of 512 the longest answer averaged 461 tokens
+against a mean of 184, so only 40 % of decode slots did useful work, and throughput
+fell 29 % from the 128-token arm. Per decode step, time does drop as the batch thins
+(3.3 → 2.8 ms), but far less than the number of active sequences does, because each
+decode step has a fixed cost (reading the weights from memory, launching kernels,
+scheduling) that does not shrink with the batch.
+
+The trainer side grows too (0.985 → 1.870 s), since the loss forward and backward run
+over every generated token. Weight sync does not depend on length (0.179 s in both
+arms), so its share falls from 11.0 % to 5.3 %.
+
+**Learning signal.** Short caps truncate answers: 25 % hit the 128-token cap, and the
+correctness of the first 10 steps was 0.161 at 128 vs 0.383 at 512, because a
+truncated answer usually loses its `####` line. Cutting generation length is the
+cheapest rollout speed-up, but it also removes reward signal.
 
 ## 6. E4: Weight-sync cost and GPU idleness
 
