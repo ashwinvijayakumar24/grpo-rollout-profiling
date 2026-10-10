@@ -33,6 +33,9 @@ export VLLM_CACHE_ROOT=$STORE/.vllm_cache
 export TRITON_CACHE_DIR=$STORE/.triton_cache
 
 module load cuda/12.9.1
+# Put the env's tools (ninja, used by FlashInfer's JIT kernel builds) on PATH; the env's
+# python is called by absolute path, so conda activation never did this (E6 job 13943303).
+export PATH="$(dirname "$PY"):$PATH"
 
 cd "$REPO"
 echo "job $SLURM_JOB_ID on $(hostname) at $(date -Is)"
