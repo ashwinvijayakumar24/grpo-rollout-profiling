@@ -1,3 +1,4 @@
 {"arm": "baseline", "rep": 0, "seed": 0, "status": "completed", "wall_s": 179.67, "run_dir": "E1_breakdown/baseline/rep0", "slurm_job": "13930286", "git_sha": "bd0d33a1b0588681ef203264a4c02594abb44109", "finished_unix": 1791600132.6109293}
 {"arm": "baseline", "rep": 1, "seed": 1, "status": "completed", "wall_s": 178.69, "run_dir": "E1_breakdown/baseline/rep1", "slurm_job": "13930286", "git_sha": "bd0d33a1b0588681ef203264a4c02594abb44109", "finished_unix": 1791600311.37274}
 {"arm": "baseline", "rep": 2, "seed": 2, "status": "completed", "wall_s": 174.18, "run_dir": "E1_breakdown/baseline/rep2", "slurm_job": "13930286", "git_sha": "bd0d33a1b0588681ef203264a4c02594abb44109", "finished_unix": 1791600485.6292279}
+{"arm": "baseline_profiled", "rep": 0, "seed": 0, "status": "completed", "wall_s": 219.57, "run_dir": "E1_breakdown/baseline_profiled/rep0", "slurm_job": "13930286", "git_sha": "c7605be626eea283b7a62d5fbf3690ac64731246", "finished_unix": 1791600705.229037}
