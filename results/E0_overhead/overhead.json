@@ -1,0 +1,24 @@
+{
+ "paired_by_seed": true,
+ "step_diff_s": [
+  0.013311321229166673,
+  0.006481971750000426,
+  0.007395076979166859
+ ],
+ "step_diff_pct": [
+  0.5911296640133098,
+  0.2870601333592967,
+  0.3249931476229582
+ ],
+ "mean_diff_s": 0.00906278998611132,
+ "mean_diff_pct": 0.4010609816651882,
+ "identical_generated_tokens": [
+  true,
+  true,
+  true
+ ],
+ "source": [
+  "results/E0_overhead/timing_on/rep*/summary.json",
+  "results/E0_overhead/timing_off/rep*/summary.json"
+ ]
+}

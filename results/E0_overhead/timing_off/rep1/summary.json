@@ -1,0 +1,64 @@
+{
+  "run_dir": "E0_overhead/timing_off/rep1",
+  "experiment": "E0_overhead",
+  "config_hash": "74015ff71e6f1df4",
+  "git_sha": "c7605be626eea283b7a62d5fbf3690ac64731246",
+  "slurm_job": "13931400",
+  "gpu": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "status": "completed",
+  "steps_total": 50,
+  "steps_kept": 48,
+  "steps_profiled": 0,
+  "warmup_dropped": 2,
+  "step_time_mean_s": 2.258053625958333,
+  "step_time_stdev_s": 0.070815038017872,
+  "buckets": {
+    "rollout_gen": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "reward": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "advantage_loss": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "optimizer_step": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "weight_sync": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "other": {
+      "mean_s_per_step": 2.258053625958333,
+      "share": 1.0
+    }
+  },
+  "sub_buckets": {},
+  "rollout_tokens_per_s": null,
+  "rollout_completions_per_s": null,
+  "completion_tokens_per_step": 8550.479166666666,
+  "completion_len_mean": 133.60123697916666,
+  "completion_len_max_mean": 255.04166666666666,
+  "slot_occupancy": 0.5236684686280796,
+  "rollout_ms_per_longest_token": 0.0,
+  "truncated_frac_mean": 0.103515625,
+  "zero_signal_group_frac_mean": 0.1015625,
+  "sync": {
+    "steps_with_sync": 48,
+    "mean_s_per_sync": 0.0
+  },
+  "reward": {
+    "window": 10,
+    "reward_first": 0.34718750417232513,
+    "reward_last": 0.6937500178813935,
+    "correct_first": 0.2984375,
+    "correct_last": 0.603125
+  }
+}
