@@ -57,8 +57,12 @@ Three rules keep the attribution honest:
 capture and compilation warm-up) and any step captured under `torch.profiler`
 (profiling slows steps; those runs are separate "profiled" arms).
 
-**Measurement overhead (E0).** TODO: step time with full instrumentation vs with only
-step-boundary syncs.
+**Measurement overhead (E0).** Full instrumentation (a GPU sync at every span boundary,
+per-span events, and the NVML sampler) adds **0.4 %** to step time: 2.271 ± 0.010 s
+vs 2.262 ± 0.012 s with only step-boundary syncs (job 13931400, 3 reps per arm,
+interleaved on one GPU). Reps were paired by seed, and each pair generated exactly the
+same tokens (8,557 per step in both arms), so the per-seed differences, 0.3–0.6 %,
+isolate the cost of measuring. Source: `results/E0_overhead/overhead.json`.
 
 **Repetitions.** Each configuration runs 3 times with seeds 0, 1, 2. Arms in one
 experiment run interleaved in one Slurm job on one GPU. Tables report mean ± sample
