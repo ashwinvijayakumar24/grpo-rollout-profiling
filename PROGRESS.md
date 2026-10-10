@@ -98,3 +98,11 @@ Newest entries at the bottom. Rules:
 - **Experiments submitted** (git `bd0d33a`, `inferno`/`gpu-h100`): E0 13930285,
   E1 13930286, E2 13930287, E3 13930288, E4 13930289. One job per experiment, so
   every arm of an experiment shares one GPU.
+- **E0 job 13930285 failed** (timing_on arm, all 3 reps): `EADDRINUSE` on port 29500.
+  E0 and E1 ran on the same node (atl1-1-03-008-27-0) at the same time, and every
+  run's vLLM process group used the default rendezvous port 29500. The timing_off
+  reps completed but are not used: E0's two arms must be measured interleaved in one
+  job. Fix in `c7605be` (each run claims a free port). Failed attempt kept on PACE at
+  `results/E0_overhead.failed-13930285`; E0 resubmitted in full.
+- **E1 timing reps completed** (job 13930286, all 3 reps; the profiled arm was still
+  running at the time of this entry).
