@@ -1,0 +1,2 @@
+{"arm": "vllm", "rep": 0, "seed": 0, "status": "completed", "wall_s": 144.36, "run_dir": "smoke/vllm/rep0", "slurm_job": "13926413", "git_sha": "57aea3f55adcc5d936b0bdbdce91b07442386082", "finished_unix": 1791581874.8260453}
+{"arm": "hf_generate", "rep": 0, "seed": 0, "status": "completed", "wall_s": 83.52, "run_dir": "smoke/hf_generate/rep0", "slurm_job": "13926413", "git_sha": "57aea3f55adcc5d936b0bdbdce91b07442386082", "finished_unix": 1791581958.4488542}
