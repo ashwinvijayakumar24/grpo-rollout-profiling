@@ -1,7 +1,7 @@
 # Where does GRPO training time go? A rollout-infrastructure profile
 
-> **Status:** E0–E4 complete. E5 (stretch) pending. Every number traces to a file in
-> `results/`; nothing here is estimated.
+> **Status:** complete (E0–E5). Every number traces to a file in `results/`; nothing
+> here is estimated.
 
 ## Summary
 
@@ -24,7 +24,9 @@ Five findings, each from repeated runs:
    step saved 7.6 % of step time; learning looked slower, though 3 reps do not settle
    it (E4).
 
-The instrumentation itself cost 0.4 % of step time (E0).
+The instrumentation itself cost 0.4 % of step time (E0). As a stretch (E5), vLLM
+generated 7.9× faster than HF `generate`, making the step 3.1× faster despite the sync
+and correction pass it adds.
 
 ## 1. Setup
 
@@ -302,7 +304,46 @@ a sync step for both schedules). vLLM sleep mode was off in every arm (NOTES.md 
   0.654 ± 0.029). With 3 reps the final-window ranges overlap, so this is suggestive,
   not established.
 
-## 7. What I'd build differently in a rollout system
+## 7. E5 (stretch): vLLM vs HF generate as the rollout backend
+
+**Result: vLLM generated 7.9× more tokens per second than HF `generate`, making the
+whole step 3.1× faster, even though vLLM adds a weight sync and an extra scoring pass
+that HF generate does not need.**
+
+Source: `results/E5_backend/{vllm,hf_generate}/arm_summary.json` (job 13931904, arms
+interleaved on one GPU, 3 reps each). SGLang was dropped: TRL has no SGLang path
+(DECISIONS.md, FUTURE.md).
+
+![E5 breakdown](results/figures/E5_breakdown.png)
+
+| Backend | Step (s) | Rollout (s) | Generated tok/s | Trainer side (s) | ↳ old-log-prob pass (s) | Weight sync (s) | Correct, last 10 steps |
+|---|---|---|---|---|---|---|---|
+| vLLM | 2.278 ± 0.018 | 0.761 ± 0.007 | 11,244 ± 246 | 1.292 ± 0.015 | 0.293 | 0.182 | 0.588 ± 0.061 |
+| HF generate | 7.046 ± 0.148 | 6.013 ± 0.137 | 1,422 ± 33 | 0.990 ± 0.011 | — | — | 0.601 ± 0.039 |
+
+The chart shows shares; note that the HF step is 3.1× longer in absolute time.
+
+**Mechanism.**
+
+- *What vLLM costs.* With vLLM, the sampler is a separate copy of the model, so each
+  step pays a weight sync (0.182 s) and a no-grad pass where the trainer recomputes
+  the sampled tokens' probabilities to correct for vLLM's slightly different numerics
+  (0.293 s). With HF generate the trainer model *is* the sampler, so neither exists; the
+  trainer side is 0.30 s shorter (0.990 vs 1.292 s), which is the missing pass.
+- *What vLLM buys.* Per decode position of the longest sample, HF generate took 23.6 ms
+  against vLLM's 3.0 ms (`rollout_ms_per_longest_token`). vLLM runs decode through
+  captured CUDA graphs and a paged KV cache, while HF generate pays Python and
+  kernel-launch overhead on every token. *(The per-feature attribution is inference;
+  only the totals were measured.)* The 5.25 s saved in rollout outweighs the 0.47 s
+  vLLM adds by more than 10×.
+- *Same learning.* Both backends sample from the same policy, and training-batch
+  correctness ended within noise (0.588 ± 0.061 vs 0.601 ± 0.039).
+
+**Reproducibility across jobs.** The vLLM arm is E1's baseline configuration for the
+third time: 2.278 s here, 2.266 s in E1 (job 13930286), 2.291 s in E2 (job 13930287),
+within 1.1 % of each other.
+
+## 8. What I'd build differently in a rollout system
 
 Every claim cites the experiment that supports it. Anything not directly measured is
 marked *(speculative)*. Scope caveat for all of them: one H100, a 1.5B model, short
@@ -335,17 +376,19 @@ shows rollout's share rising with length).
 5. **At this scale, optimize the trainer side first.** The scoring pass, loss forward,
    and backward were 57 % of the step; rollout was 33 % (E1). Within that, 0.30 s per
    step (13 %) is a no-grad forward that exists only because the sampler and trainer
-   compute slightly different probabilities (E1). A rollout system whose sampler
-   returns log-probs the trainer can trust (matched numerics) would remove that pass.
-   *(Speculative: E5 compares against HF generate, which has no such pass, as the
-   nearest available measurement.)*
+   compute slightly different probabilities (E1). Together with the weight sync, the
+   separate sampler adds 0.47 s per step (E5), which is still more than 10× cheaper than
+   generating with the trainer model itself (E5: HF generate's rollout took 6.0 s vs
+   vLLM's 0.76 s). So keep a dedicated inference engine, but give it numerics the
+   trainer can trust, which would remove the correction pass. *(Speculative: matched
+   numerics were not built or measured.)*
 6. **Instrument with kernel traces, not utilization counters.** NVML reported 80 %
    utilization during sync; kernel traces showed 2 % (E1). For any stage shorter than
    a second, utilization counters describe the neighbouring stage. Timing that waits
    for the GPU at each boundary cost only 0.4 % (E0), so there is little reason not to
    leave it on.
 
-## 8. Interview questions this study answers
+## 9. Interview questions this study answers
 
 | Question | Short answer | Where |
 |---|---|---|
@@ -353,4 +396,4 @@ shows rollout's share rising with length).
 | How do group size and generation length change rollout cost? | Sub-linear in batch size (memory-bound decode); set by the longest sample, not the mean | §4 (E2), §5 (E3) |
 | What does trainer→sampler weight sync cost on one GPU, and is the GPU idle during it? | 0.18 s per sync, GPU busy 2 %; fixed per sync, so less frequent sync trades speed for staleness | §3 (E1), §6 (E4) |
 | How do you time GPU work correctly when kernels run asynchronously? | Synchronize at every stage boundary, charge exclusive time, and check the overhead (0.4 %); use kernel traces, not NVML, for sub-second stages | §2 (E0), §3, `tests/test_timing.py` |
-| If you were building a rollout system, what would you change first, and why? | Bulk weight sync, then slot refill for long-tail generation; both are sized by measurements here | §7 |
+| If you were building a rollout system, what would you change first, and why? | Bulk weight sync, then slot refill for long-tail generation; both are sized by measurements here | §8 |

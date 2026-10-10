@@ -166,3 +166,11 @@ Newest entries at the bottom. Rules:
   been copied to the Mac and committed; the stash stays on PACE as a backup.
 - **E5 submitted** (job 13931904): vLLM vs HF generate, 3 reps each. E1–E4 completed
   cleanly, which was the precondition for the stretch.
+- **E5 results** (job 13931904, 3 reps each; `results/E5_backend/`): vLLM 2.278 ±
+  0.018 s/step, rollout 0.761 s, 11,244 tok/s; HF generate 7.046 ± 0.148 s/step,
+  rollout 6.013 s, 1,422 tok/s (7.9× slower generation, 3.1× slower step). vLLM's
+  extra cost: sync 0.182 s + old-log-prob pass 0.293 s. Correctness, last 10 steps:
+  0.588 ± 0.061 (vLLM) vs 0.601 ± 0.039 (HF). Baseline reproduces across three jobs:
+  2.266 (E1), 2.291 (E2 G8), 2.278 (E5) s/step.
+- **All planned experiments done (E0–E5).** WRITEUP.md, RESUME.md, and FUTURE.md
+  complete.
