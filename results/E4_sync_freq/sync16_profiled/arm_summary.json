@@ -1,0 +1,745 @@
+{
+  "n_reps": 1,
+  "runs": [
+    "E4_sync_freq/sync16_profiled/rep0"
+  ],
+  "slurm_jobs": [
+    "13930289"
+  ],
+  "gpus": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "config_hashes": [
+    "493e1b95053f8281"
+  ],
+  "metrics": {
+    "buckets.advantage_loss.mean_s_per_step": {
+      "mean": 1.30399547175,
+      "stdev": null,
+      "min": 1.30399547175,
+      "max": 1.30399547175,
+      "n": 1
+    },
+    "buckets.advantage_loss.share": {
+      "mean": 0.6121048270497741,
+      "stdev": null,
+      "min": 0.6121048270497741,
+      "max": 0.6121048270497741,
+      "n": 1
+    },
+    "buckets.optimizer_step.mean_s_per_step": {
+      "mean": 0.017818519805555558,
+      "stdev": null,
+      "min": 0.017818519805555558,
+      "max": 0.017818519805555558,
+      "n": 1
+    },
+    "buckets.optimizer_step.share": {
+      "mean": 0.00836414099600002,
+      "stdev": null,
+      "min": 0.00836414099600002,
+      "max": 0.00836414099600002,
+      "n": 1
+    },
+    "buckets.other.mean_s_per_step": {
+      "mean": 0.0233967445833334,
+      "stdev": null,
+      "min": 0.0233967445833334,
+      "max": 0.0233967445833334,
+      "n": 1
+    },
+    "buckets.other.share": {
+      "mean": 0.01098259971523481,
+      "stdev": null,
+      "min": 0.01098259971523481,
+      "max": 0.01098259971523481,
+      "n": 1
+    },
+    "buckets.reward.mean_s_per_step": {
+      "mean": 0.0005314959722222223,
+      "stdev": null,
+      "min": 0.0005314959722222223,
+      "max": 0.0005314959722222223,
+      "n": 1
+    },
+    "buckets.reward.share": {
+      "mean": 0.00024948802139483726,
+      "stdev": null,
+      "min": 0.00024948802139483726,
+      "max": 0.00024948802139483726,
+      "n": 1
+    },
+    "buckets.rollout_gen.mean_s_per_step": {
+      "mean": 0.7795401145,
+      "stdev": null,
+      "min": 0.7795401145,
+      "max": 0.7795401145,
+      "n": 1
+    },
+    "buckets.rollout_gen.share": {
+      "mean": 0.36592172082010427,
+      "stdev": null,
+      "min": 0.36592172082010427,
+      "max": 0.36592172082010427,
+      "n": 1
+    },
+    "buckets.weight_sync.mean_s_per_step": {
+      "mean": 0.0050643099166666665,
+      "stdev": null,
+      "min": 0.0050643099166666665,
+      "max": 0.0050643099166666665,
+      "n": 1
+    },
+    "buckets.weight_sync.share": {
+      "mean": 0.0023772233974919906,
+      "stdev": null,
+      "min": 0.0023772233974919906,
+      "max": 0.0023772233974919906,
+      "n": 1
+    },
+    "completion_len_max_mean": {
+      "mean": 256.0,
+      "stdev": null,
+      "min": 256.0,
+      "max": 256.0,
+      "n": 1
+    },
+    "completion_len_mean": {
+      "mean": 143.98784722222223,
+      "stdev": null,
+      "min": 143.98784722222223,
+      "max": 143.98784722222223,
+      "n": 1
+    },
+    "completion_tokens_per_step": {
+      "mean": 9215.222222222223,
+      "stdev": null,
+      "min": 9215.222222222223,
+      "max": 9215.222222222223,
+      "n": 1
+    },
+    "nvml_util_by_span.advantage_loss.mean_util_gpu_pct": {
+      "mean": 89.3619879113499,
+      "stdev": null,
+      "min": 89.3619879113499,
+      "max": 89.3619879113499,
+      "n": 1
+    },
+    "nvml_util_by_span.advantage_loss.samples": {
+      "mean": 1489.0,
+      "stdev": null,
+      "min": 1489.0,
+      "max": 1489.0,
+      "n": 1
+    },
+    "nvml_util_by_span.backward.mean_util_gpu_pct": {
+      "mean": 95.8862660944206,
+      "stdev": null,
+      "min": 95.8862660944206,
+      "max": 95.8862660944206,
+      "n": 1
+    },
+    "nvml_util_by_span.backward.samples": {
+      "mean": 466.0,
+      "stdev": null,
+      "min": 466.0,
+      "max": 466.0,
+      "n": 1
+    },
+    "nvml_util_by_span.loss_forward.mean_util_gpu_pct": {
+      "mean": 95.50877192982456,
+      "stdev": null,
+      "min": 95.50877192982456,
+      "max": 95.50877192982456,
+      "n": 1
+    },
+    "nvml_util_by_span.loss_forward.samples": {
+      "mean": 228.0,
+      "stdev": null,
+      "min": 228.0,
+      "max": 228.0,
+      "n": 1
+    },
+    "nvml_util_by_span.old_logprob.mean_util_gpu_pct": {
+      "mean": 91.33802816901408,
+      "stdev": null,
+      "min": 91.33802816901408,
+      "max": 91.33802816901408,
+      "n": 1
+    },
+    "nvml_util_by_span.old_logprob.samples": {
+      "mean": 213.0,
+      "stdev": null,
+      "min": 213.0,
+      "max": 213.0,
+      "n": 1
+    },
+    "nvml_util_by_span.optimizer_step.mean_util_gpu_pct": {
+      "mean": 96.11111111111111,
+      "stdev": null,
+      "min": 96.11111111111111,
+      "max": 96.11111111111111,
+      "n": 1
+    },
+    "nvml_util_by_span.optimizer_step.samples": {
+      "mean": 9.0,
+      "stdev": null,
+      "min": 9.0,
+      "max": 9.0,
+      "n": 1
+    },
+    "nvml_util_by_span.reward.mean_util_gpu_pct": {
+      "mean": 90.5,
+      "stdev": null,
+      "min": 90.5,
+      "max": 90.5,
+      "n": 1
+    },
+    "nvml_util_by_span.reward.samples": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "nvml_util_by_span.rollout_gen.mean_util_gpu_pct": {
+      "mean": 80.44344703770197,
+      "stdev": null,
+      "min": 80.44344703770197,
+      "max": 80.44344703770197,
+      "n": 1
+    },
+    "nvml_util_by_span.rollout_gen.samples": {
+      "mean": 557.0,
+      "stdev": null,
+      "min": 557.0,
+      "max": 557.0,
+      "n": 1
+    },
+    "nvml_util_by_span.weight_sync.mean_util_gpu_pct": {
+      "mean": 79.75,
+      "stdev": null,
+      "min": 79.75,
+      "max": 79.75,
+      "n": 1
+    },
+    "nvml_util_by_span.weight_sync.samples": {
+      "mean": 4.0,
+      "stdev": null,
+      "min": 4.0,
+      "max": 4.0,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.busy_frac": {
+      "mean": 0.7241100307596969,
+      "stdev": null,
+      "min": 0.7241100307596969,
+      "max": 0.7241100307596969,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.busy_s": {
+      "mean": 3.4366406309814446,
+      "stdev": null,
+      "min": 3.4366406309814446,
+      "max": 3.4366406309814446,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.by_kind_s.kernel": {
+      "mean": 3.3967519479980472,
+      "stdev": null,
+      "min": 3.3967519479980472,
+      "max": 3.3967519479980472,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.by_kind_s.memcpy": {
+      "mean": 0.03525484228515624,
+      "stdev": null,
+      "min": 0.03525484228515624,
+      "max": 0.03525484228515624,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.by_kind_s.memset": {
+      "mean": 0.006110748413085937,
+      "stdev": null,
+      "min": 0.006110748413085937,
+      "max": 0.006110748413085937,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.count": {
+      "mean": 16.0,
+      "stdev": null,
+      "min": 16.0,
+      "max": 16.0,
+      "n": 1
+    },
+    "profile_busy.advantage_loss.wall_s": {
+      "mean": 4.746019921,
+      "stdev": null,
+      "min": 4.746019921,
+      "max": 4.746019921,
+      "n": 1
+    },
+    "profile_busy.backward.busy_frac": {
+      "mean": 0.907752757630896,
+      "stdev": null,
+      "min": 0.907752757630896,
+      "max": 0.907752757630896,
+      "n": 1
+    },
+    "profile_busy.backward.busy_s": {
+      "mean": 1.1750000704345702,
+      "stdev": null,
+      "min": 1.1750000704345702,
+      "max": 1.1750000704345702,
+      "n": 1
+    },
+    "profile_busy.backward.by_kind_s.kernel": {
+      "mean": 1.1442320825195313,
+      "stdev": null,
+      "min": 1.1442320825195313,
+      "max": 1.1442320825195313,
+      "n": 1
+    },
+    "profile_busy.backward.by_kind_s.memcpy": {
+      "mean": 0.026592790649414066,
+      "stdev": null,
+      "min": 0.026592790649414066,
+      "max": 0.026592790649414066,
+      "n": 1
+    },
+    "profile_busy.backward.by_kind_s.memset": {
+      "mean": 0.004175197265625001,
+      "stdev": null,
+      "min": 0.004175197265625001,
+      "max": 0.004175197265625001,
+      "n": 1
+    },
+    "profile_busy.backward.count": {
+      "mean": 16.0,
+      "stdev": null,
+      "min": 16.0,
+      "max": 16.0,
+      "n": 1
+    },
+    "profile_busy.backward.wall_s": {
+      "mean": 1.294405399,
+      "stdev": null,
+      "min": 1.294405399,
+      "max": 1.294405399,
+      "n": 1
+    },
+    "profile_busy.loss_forward.busy_frac": {
+      "mean": 0.7586964929789239,
+      "stdev": null,
+      "min": 0.7586964929789239,
+      "max": 0.7586964929789239,
+      "n": 1
+    },
+    "profile_busy.loss_forward.busy_s": {
+      "mean": 0.5180524504394531,
+      "stdev": null,
+      "min": 0.5180524504394531,
+      "max": 0.5180524504394531,
+      "n": 1
+    },
+    "profile_busy.loss_forward.by_kind_s.kernel": {
+      "mean": 0.5167742266845703,
+      "stdev": null,
+      "min": 0.5167742266845703,
+      "max": 0.5167742266845703,
+      "n": 1
+    },
+    "profile_busy.loss_forward.by_kind_s.memcpy": {
+      "mean": 0.0005513970947265626,
+      "stdev": null,
+      "min": 0.0005513970947265626,
+      "max": 0.0005513970947265626,
+      "n": 1
+    },
+    "profile_busy.loss_forward.by_kind_s.memset": {
+      "mean": 0.0007268266601562502,
+      "stdev": null,
+      "min": 0.0007268266601562502,
+      "max": 0.0007268266601562502,
+      "n": 1
+    },
+    "profile_busy.loss_forward.count": {
+      "mean": 16.0,
+      "stdev": null,
+      "min": 16.0,
+      "max": 16.0,
+      "n": 1
+    },
+    "profile_busy.loss_forward.wall_s": {
+      "mean": 0.6828190919999999,
+      "stdev": null,
+      "min": 0.6828190919999999,
+      "max": 0.6828190919999999,
+      "n": 1
+    },
+    "profile_busy.old_logprob.busy_frac": {
+      "mean": 0.8272164236605151,
+      "stdev": null,
+      "min": 0.8272164236605151,
+      "max": 0.8272164236605151,
+      "n": 1
+    },
+    "profile_busy.old_logprob.busy_s": {
+      "mean": 0.5100454160156249,
+      "stdev": null,
+      "min": 0.5100454160156249,
+      "max": 0.5100454160156249,
+      "n": 1
+    },
+    "profile_busy.old_logprob.by_kind_s.kernel": {
+      "mean": 0.5092412253417968,
+      "stdev": null,
+      "min": 0.5092412253417968,
+      "max": 0.5092412253417968,
+      "n": 1
+    },
+    "profile_busy.old_logprob.by_kind_s.memcpy": {
+      "mean": 7.59678955078125e-05,
+      "stdev": null,
+      "min": 7.59678955078125e-05,
+      "max": 7.59678955078125e-05,
+      "n": 1
+    },
+    "profile_busy.old_logprob.by_kind_s.memset": {
+      "mean": 0.0007282227783203125,
+      "stdev": null,
+      "min": 0.0007282227783203125,
+      "max": 0.0007282227783203125,
+      "n": 1
+    },
+    "profile_busy.old_logprob.count": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "profile_busy.old_logprob.wall_s": {
+      "mean": 0.616580379,
+      "stdev": null,
+      "min": 0.616580379,
+      "max": 0.616580379,
+      "n": 1
+    },
+    "profile_busy.optimizer_step.busy_frac": {
+      "mean": 0.9200466254573871,
+      "stdev": null,
+      "min": 0.9200466254573871,
+      "max": 0.9200466254573871,
+      "n": 1
+    },
+    "profile_busy.optimizer_step.busy_s": {
+      "mean": 0.04171556079101563,
+      "stdev": null,
+      "min": 0.04171556079101563,
+      "max": 0.04171556079101563,
+      "n": 1
+    },
+    "profile_busy.optimizer_step.by_kind_s.kernel": {
+      "mean": 0.04171556079101563,
+      "stdev": null,
+      "min": 0.04171556079101563,
+      "max": 0.04171556079101563,
+      "n": 1
+    },
+    "profile_busy.optimizer_step.count": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "profile_busy.optimizer_step.wall_s": {
+      "mean": 0.045340702999999996,
+      "stdev": null,
+      "min": 0.045340702999999996,
+      "max": 0.045340702999999996,
+      "n": 1
+    },
+    "profile_busy.reward.busy_frac": {
+      "mean": 0.017902500681814253,
+      "stdev": null,
+      "min": 0.017902500681814253,
+      "max": 0.017902500681814253,
+      "n": 1
+    },
+    "profile_busy.reward.busy_s": {
+      "mean": 2.79638671875e-05,
+      "stdev": null,
+      "min": 2.79638671875e-05,
+      "max": 2.79638671875e-05,
+      "n": 1
+    },
+    "profile_busy.reward.by_kind_s.kernel": {
+      "mean": 1.98367919921875e-05,
+      "stdev": null,
+      "min": 1.98367919921875e-05,
+      "max": 1.98367919921875e-05,
+      "n": 1
+    },
+    "profile_busy.reward.by_kind_s.memcpy": {
+      "mean": 8.1270751953125e-06,
+      "stdev": null,
+      "min": 8.1270751953125e-06,
+      "max": 8.1270751953125e-06,
+      "n": 1
+    },
+    "profile_busy.reward.count": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "profile_busy.reward.wall_s": {
+      "mean": 0.001562009,
+      "stdev": null,
+      "min": 0.001562009,
+      "max": 0.001562009,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.busy_frac": {
+      "mean": 0.6558653988740509,
+      "stdev": null,
+      "min": 0.6558653988740509,
+      "max": 0.6558653988740509,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.busy_s": {
+      "mean": 1.2289876080322264,
+      "stdev": null,
+      "min": 1.2289876080322264,
+      "max": 1.2289876080322264,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.by_kind_s.kernel": {
+      "mean": 1.222190315673828,
+      "stdev": null,
+      "min": 1.222190315673828,
+      "max": 1.222190315673828,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.by_kind_s.memcpy": {
+      "mean": 0.007793698364257813,
+      "stdev": null,
+      "min": 0.007793698364257813,
+      "max": 0.007793698364257813,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.by_kind_s.memset": {
+      "mean": 0.00048050170898437505,
+      "stdev": null,
+      "min": 0.00048050170898437505,
+      "max": 0.00048050170898437505,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.count": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "profile_busy.rollout_gen.wall_s": {
+      "mean": 1.873841203,
+      "stdev": null,
+      "min": 1.873841203,
+      "max": 1.873841203,
+      "n": 1
+    },
+    "profile_busy.weight_sync.busy_frac": {
+      "mean": 0.018953572253099245,
+      "stdev": null,
+      "min": 0.018953572253099245,
+      "max": 0.018953572253099245,
+      "n": 1
+    },
+    "profile_busy.weight_sync.busy_s": {
+      "mean": 0.0035390872802734375,
+      "stdev": null,
+      "min": 0.0035390872802734375,
+      "max": 0.0035390872802734375,
+      "n": 1
+    },
+    "profile_busy.weight_sync.by_kind_s.kernel": {
+      "mean": 0.0035390872802734375,
+      "stdev": null,
+      "min": 0.0035390872802734375,
+      "max": 0.0035390872802734375,
+      "n": 1
+    },
+    "profile_busy.weight_sync.count": {
+      "mean": 1.0,
+      "stdev": null,
+      "min": 1.0,
+      "max": 1.0,
+      "n": 1
+    },
+    "profile_busy.weight_sync.wall_s": {
+      "mean": 0.18672402400000002,
+      "stdev": null,
+      "min": 0.18672402400000002,
+      "max": 0.18672402400000002,
+      "n": 1
+    },
+    "reward.correct_first": {
+      "mean": 0.240625,
+      "stdev": null,
+      "min": 0.240625,
+      "max": 0.240625,
+      "n": 1
+    },
+    "reward.correct_last": {
+      "mean": 0.5328125,
+      "stdev": null,
+      "min": 0.5328125,
+      "max": 0.5328125,
+      "n": 1
+    },
+    "reward.reward_first": {
+      "mean": 0.28125000894069674,
+      "stdev": null,
+      "min": 0.28125000894069674,
+      "max": 0.28125000894069674,
+      "n": 1
+    },
+    "reward.reward_last": {
+      "mean": 0.6201562702655792,
+      "stdev": null,
+      "min": 0.6201562702655792,
+      "max": 0.6201562702655792,
+      "n": 1
+    },
+    "reward.window": {
+      "mean": 10.0,
+      "stdev": null,
+      "min": 10.0,
+      "max": 10.0,
+      "n": 1
+    },
+    "rollout_completions_per_s": {
+      "mean": 82.09968776404772,
+      "stdev": null,
+      "min": 82.09968776404772,
+      "max": 82.09968776404772,
+      "n": 1
+    },
+    "rollout_ms_per_longest_token": {
+      "mean": 3.0450785722656253,
+      "stdev": null,
+      "min": 3.0450785722656253,
+      "max": 3.0450785722656253,
+      "n": 1
+    },
+    "rollout_tokens_per_s": {
+      "mean": 11821.357298761848,
+      "stdev": null,
+      "min": 11821.357298761848,
+      "max": 11821.357298761848,
+      "n": 1
+    },
+    "slot_occupancy": {
+      "mean": 0.5624525282118056,
+      "stdev": null,
+      "min": 0.5624525282118056,
+      "max": 0.5624525282118056,
+      "n": 1
+    },
+    "step_time_mean_s": {
+      "mean": 2.1303466565277778,
+      "stdev": null,
+      "min": 2.1303466565277778,
+      "max": 2.1303466565277778,
+      "n": 1
+    },
+    "step_time_stdev_s": {
+      "mean": 0.0685541991415963,
+      "stdev": null,
+      "min": 0.0685541991415963,
+      "max": 0.0685541991415963,
+      "n": 1
+    },
+    "steps_kept": {
+      "mean": 36.0,
+      "stdev": null,
+      "min": 36.0,
+      "max": 36.0,
+      "n": 1
+    },
+    "steps_profiled": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "steps_total": {
+      "mean": 40.0,
+      "stdev": null,
+      "min": 40.0,
+      "max": 40.0,
+      "n": 1
+    },
+    "sub_buckets.backward.mean_s_per_step": {
+      "mean": 0.6594479175555557,
+      "stdev": null,
+      "min": 0.6594479175555557,
+      "max": 0.6594479175555557,
+      "n": 1
+    },
+    "sub_buckets.loss_forward.mean_s_per_step": {
+      "mean": 0.3060446115,
+      "stdev": null,
+      "min": 0.3060446115,
+      "max": 0.3060446115,
+      "n": 1
+    },
+    "sub_buckets.old_logprob.mean_s_per_step": {
+      "mean": 0.2969583161666667,
+      "stdev": null,
+      "min": 0.2969583161666667,
+      "max": 0.2969583161666667,
+      "n": 1
+    },
+    "sync.mean_s_per_sync": {
+      "mean": 0.182315157,
+      "stdev": null,
+      "min": 0.182315157,
+      "max": 0.182315157,
+      "n": 1
+    },
+    "sync.steps_with_sync": {
+      "mean": 1.0,
+      "stdev": null,
+      "min": 1.0,
+      "max": 1.0,
+      "n": 1
+    },
+    "truncated_frac_mean": {
+      "mean": 0.14713541666666666,
+      "stdev": null,
+      "min": 0.14713541666666666,
+      "max": 0.14713541666666666,
+      "n": 1
+    },
+    "warmup_dropped": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "zero_signal_group_frac_mean": {
+      "mean": 0.0625,
+      "stdev": null,
+      "min": 0.0625,
+      "max": 0.0625,
+      "n": 1
+    }
+  }
+}

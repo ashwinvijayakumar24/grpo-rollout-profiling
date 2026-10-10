@@ -1,0 +1,392 @@
+{
+  "n_reps": 3,
+  "runs": [
+    "E4_sync_freq/sync16/rep0",
+    "E4_sync_freq/sync16/rep1",
+    "E4_sync_freq/sync16/rep2"
+  ],
+  "slurm_jobs": [
+    "13930289"
+  ],
+  "gpus": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "config_hashes": [
+    "12a7c19a54ce0595",
+    "b304511c7e9bbee4",
+    "e9b9d92a9d542c34"
+  ],
+  "metrics": {
+    "buckets.advantage_loss.mean_s_per_step": {
+      "mean": 1.2915051759784948,
+      "stdev": 0.001572572907001793,
+      "min": 1.2897274480645162,
+      "max": 1.292714583451613,
+      "n": 3
+    },
+    "buckets.advantage_loss.share": {
+      "mean": 0.6112918076164067,
+      "stdev": 0.003220422718523133,
+      "min": 0.607685725219686,
+      "max": 0.6138811374367285,
+      "n": 3
+    },
+    "buckets.optimizer_step.mean_s_per_step": {
+      "mean": 0.017893536650537636,
+      "stdev": 6.351718995068323e-05,
+      "min": 0.017821218209677418,
+      "max": 0.017940277258064515,
+      "n": 3
+    },
+    "buckets.optimizer_step.share": {
+      "mean": 0.008469259473983517,
+      "stdev": 3.495612153988846e-05,
+      "min": 0.008445405383741238,
+      "max": 0.008509385228599,
+      "n": 3
+    },
+    "buckets.other.mean_s_per_step": {
+      "mean": 0.023459269666666654,
+      "stdev": 7.655325916718282e-05,
+      "min": 0.023372086370967698,
+      "max": 0.02351549880645161,
+      "n": 3
+    },
+    "buckets.other.share": {
+      "mean": 0.011103633172872754,
+      "stdev": 5.500642896152097e-05,
+      "min": 0.01106797697499542,
+      "max": 0.011166982518409007,
+      "n": 3
+    },
+    "buckets.reward.mean_s_per_step": {
+      "mean": 0.0005351277795698925,
+      "stdev": 6.150862776979452e-06,
+      "min": 0.0005297248225806452,
+      "max": 0.0005418216451612903,
+      "n": 3
+    },
+    "buckets.reward.share": {
+      "mean": 0.0002532915230866301,
+      "stdev": 3.862491950288093e-06,
+      "min": 0.0002495924340137686,
+      "max": 0.0002572989367315375,
+      "n": 3
+    },
+    "buckets.rollout_gen.mean_s_per_step": {
+      "mean": 0.7707186464139785,
+      "stdev": 0.010106856763484974,
+      "min": 0.7624703245806451,
+      "max": 0.7819928034032259,
+      "n": 3
+    },
+    "buckets.rollout_gen.share": {
+      "mean": 0.3647803795061339,
+      "stdev": 0.0032969006619138594,
+      "min": 0.3620800415707834,
+      "max": 0.36845448591933305,
+      "n": 3
+    },
+    "buckets.weight_sync.mean_s_per_step": {
+      "mean": 0.008665773462365592,
+      "stdev": 1.845449145213955e-05,
+      "min": 0.008644658580645162,
+      "max": 0.00867881879032258,
+      "n": 3
+    },
+    "buckets.weight_sync.share": {
+      "mean": 0.0041016287075165666,
+      "stdev": 1.1063904388783603e-05,
+      "min": 0.0040892316423613816,
+      "max": 0.004110500171439652,
+      "n": 3
+    },
+    "completion_len_max_mean": {
+      "mean": 255.29569892473117,
+      "stdev": 0.4741862335768143,
+      "min": 254.90322580645162,
+      "max": 255.82258064516128,
+      "n": 3
+    },
+    "completion_len_mean": {
+      "mean": 137.68506384408602,
+      "stdev": 7.126962723929113,
+      "min": 132.5970262096774,
+      "max": 145.83064516129033,
+      "n": 3
+    },
+    "completion_tokens_per_step": {
+      "mean": 8811.844086021505,
+      "stdev": 456.1256143314632,
+      "min": 8486.209677419354,
+      "max": 9333.161290322581,
+      "n": 3
+    },
+    "nvml_util_by_span.advantage_loss.mean_util_gpu_pct": {
+      "mean": 89.97090792370085,
+      "stdev": 0.1537058155133675,
+      "min": 89.79358874120406,
+      "max": 90.06619385342789,
+      "n": 3
+    },
+    "nvml_util_by_span.advantage_loss.samples": {
+      "mean": 2548.6666666666665,
+      "stdev": 10.066445913694333,
+      "min": 2538.0,
+      "max": 2558.0,
+      "n": 3
+    },
+    "nvml_util_by_span.backward.mean_util_gpu_pct": {
+      "mean": 95.9651957698028,
+      "stdev": 0.06302890327468492,
+      "min": 95.92560975609756,
+      "max": 96.03787878787878,
+      "n": 3
+    },
+    "nvml_util_by_span.backward.samples": {
+      "mean": 807.3333333333334,
+      "stdev": 14.189197769195175,
+      "min": 792.0,
+      "max": 820.0,
+      "n": 3
+    },
+    "nvml_util_by_span.loss_forward.mean_util_gpu_pct": {
+      "mean": 95.79589064025845,
+      "stdev": 0.026247254076852373,
+      "min": 95.7741935483871,
+      "max": 95.82506527415144,
+      "n": 3
+    },
+    "nvml_util_by_span.loss_forward.samples": {
+      "mean": 384.0,
+      "stdev": 12.529964086141668,
+      "min": 372.0,
+      "max": 397.0,
+      "n": 3
+    },
+    "nvml_util_by_span.old_logprob.mean_util_gpu_pct": {
+      "mean": 92.32287891274306,
+      "stdev": 0.2843652607441621,
+      "min": 91.99722222222222,
+      "max": 92.52209944751381,
+      "n": 3
+    },
+    "nvml_util_by_span.old_logprob.samples": {
+      "mean": 362.3333333333333,
+      "stdev": 2.516611478423583,
+      "min": 360.0,
+      "max": 365.0,
+      "n": 3
+    },
+    "nvml_util_by_span.optimizer_step.mean_util_gpu_pct": {
+      "mean": 96.52171512697828,
+      "stdev": 0.17645089951408602,
+      "min": 96.31818181818181,
+      "max": 96.63157894736842,
+      "n": 3
+    },
+    "nvml_util_by_span.optimizer_step.samples": {
+      "mean": 22.333333333333332,
+      "stdev": 3.511884584284246,
+      "min": 19.0,
+      "max": 26.0,
+      "n": 3
+    },
+    "nvml_util_by_span.reward.mean_util_gpu_pct": {
+      "mean": 97.75,
+      "stdev": 0.6614378277661477,
+      "min": 97.0,
+      "max": 98.25,
+      "n": 3
+    },
+    "nvml_util_by_span.reward.samples": {
+      "mean": 3.3333333333333335,
+      "stdev": 0.5773502691896257,
+      "min": 3.0,
+      "max": 4.0,
+      "n": 3
+    },
+    "nvml_util_by_span.rollout_gen.mean_util_gpu_pct": {
+      "mean": 81.48387969814145,
+      "stdev": 0.40609144481873316,
+      "min": 81.01871101871102,
+      "max": 81.76768743400211,
+      "n": 3
+    },
+    "nvml_util_by_span.rollout_gen.samples": {
+      "mean": 948.0,
+      "stdev": 13.527749258468683,
+      "min": 935.0,
+      "max": 962.0,
+      "n": 3
+    },
+    "nvml_util_by_span.weight_sync.mean_util_gpu_pct": {
+      "mean": 75.91919191919192,
+      "stdev": 8.278571214462263,
+      "min": 69.0,
+      "max": 85.0909090909091,
+      "n": 3
+    },
+    "nvml_util_by_span.weight_sync.samples": {
+      "mean": 10.0,
+      "stdev": 1.0,
+      "min": 9.0,
+      "max": 11.0,
+      "n": 3
+    },
+    "reward.correct_first": {
+      "mean": 0.2432291666666667,
+      "stdev": 0.003252603124165836,
+      "min": 0.240625,
+      "max": 0.246875,
+      "n": 3
+    },
+    "reward.correct_last": {
+      "mean": 0.5895833333333333,
+      "stdev": 0.07456470903405536,
+      "min": 0.5375,
+      "max": 0.675,
+      "n": 3
+    },
+    "reward.reward_first": {
+      "mean": 0.28177084177732464,
+      "stdev": 0.002694277714462735,
+      "min": 0.27937500476837157,
+      "max": 0.28468751162290573,
+      "n": 3
+    },
+    "reward.reward_last": {
+      "mean": 0.6823437650998434,
+      "stdev": 0.07389931097909871,
+      "min": 0.6320312559604645,
+      "max": 0.7671875119209289,
+      "n": 3
+    },
+    "reward.window": {
+      "mean": 10.0,
+      "stdev": 0.0,
+      "min": 10.0,
+      "max": 10.0,
+      "n": 3
+    },
+    "rollout_completions_per_s": {
+      "mean": 83.04885238380555,
+      "stdev": 1.0833042975158238,
+      "min": 81.8421854030786,
+      "max": 83.9376929655586,
+      "n": 3
+    },
+    "rollout_ms_per_longest_token": {
+      "mean": 3.0187390713712396,
+      "stdev": 0.03403384046190929,
+      "min": 2.9911209471754736,
+      "max": 3.0567603557652507,
+      "n": 3
+    },
+    "rollout_tokens_per_s": {
+      "mean": 11429.478800494457,
+      "stdev": 440.37145096100886,
+      "min": 11129.88847413403,
+      "max": 11935.098698740889,
+      "n": 3
+    },
+    "slot_occupancy": {
+      "mean": 0.5391166891512279,
+      "stdev": 0.027000514910471864,
+      "min": 0.5200638235624993,
+      "max": 0.5700152776645175,
+      "n": 3
+    },
+    "step_time_mean_s": {
+      "mean": 2.112777529951613,
+      "stdev": 0.008579795841980513,
+      "min": 2.105806001548387,
+      "max": 2.1223592961612905,
+      "n": 3
+    },
+    "step_time_stdev_s": {
+      "mean": 0.08125629059738683,
+      "stdev": 0.006852092624483133,
+      "min": 0.07488302483937151,
+      "max": 0.08850337739409608,
+      "n": 3
+    },
+    "steps_kept": {
+      "mean": 62.0,
+      "stdev": 0.0,
+      "min": 62.0,
+      "max": 62.0,
+      "n": 3
+    },
+    "steps_profiled": {
+      "mean": 0.0,
+      "stdev": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 3
+    },
+    "steps_total": {
+      "mean": 64.0,
+      "stdev": 0.0,
+      "min": 64.0,
+      "max": 64.0,
+      "n": 3
+    },
+    "sub_buckets.backward.mean_s_per_step": {
+      "mean": 0.6538119053978494,
+      "stdev": 0.0009755559604488193,
+      "min": 0.6527352986612903,
+      "max": 0.6546372590806452,
+      "n": 3
+    },
+    "sub_buckets.loss_forward.mean_s_per_step": {
+      "mean": 0.30337801238172046,
+      "stdev": 0.0001904011041437059,
+      "min": 0.3031775045483871,
+      "max": 0.3035563690322581,
+      "n": 3
+    },
+    "sub_buckets.old_logprob.mean_s_per_step": {
+      "mean": 0.2939656561182796,
+      "stdev": 0.0005433295210616405,
+      "min": 0.2933448498225807,
+      "max": 0.29435452343548385,
+      "n": 3
+    },
+    "sync.mean_s_per_sync": {
+      "mean": 0.17909265155555554,
+      "stdev": 0.0003813928233442265,
+      "min": 0.17865627733333334,
+      "max": 0.179362255,
+      "n": 3
+    },
+    "sync.steps_with_sync": {
+      "mean": 3.0,
+      "stdev": 0.0,
+      "min": 3.0,
+      "max": 3.0,
+      "n": 3
+    },
+    "truncated_frac_mean": {
+      "mean": 0.11357526881720431,
+      "stdev": 0.011845651705021725,
+      "min": 0.10181451612903226,
+      "max": 0.12550403225806453,
+      "n": 3
+    },
+    "warmup_dropped": {
+      "mean": 2.0,
+      "stdev": 0.0,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 3
+    },
+    "zero_signal_group_frac_mean": {
+      "mean": 0.10416666666666667,
+      "stdev": 0.033816520498411634,
+      "min": 0.08266129032258064,
+      "max": 0.1431451612903226,
+      "n": 3
+    }
+  }
+}

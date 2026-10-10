@@ -1,0 +1,11 @@
+# Stretch: same GRPO loop, different rollout backend. TRL has no SGLang path
+# (DECISIONS.md), so this compares vLLM (colocated, with weight sync and the
+# old-log-prob correction pass) against HF transformers generate (no separate
+# sampler: no sync, no correction pass).
+name: E5_backend
+base: configs/baseline.yaml
+reps: 3
+arms:
+  vllm: {}
+  hf_generate:
+    rollout.backend: hf
