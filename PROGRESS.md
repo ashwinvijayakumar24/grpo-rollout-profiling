@@ -82,3 +82,16 @@ Newest entries at the bottom. Rules:
     smoke check, not a result.
   - `vllm` arm failed again with out-of-memory in the loss forward, with vLLM holding
     its 0.3 share. Fix: `gpu_memory_utilization` 0.15 and `micro_batch` 8.
+- **Smoke job 13926413 completed, both arms** (git `57aea3f`, node atl1-1-03-008-27-0).
+  Artifacts in `results/smoke/` (profiler trace kept on PACE only, 29.5 MB).
+  This is a single 8-step run, so these are plumbing checks, not results:
+  - vLLM path works end to end: weight sync, generation, old-log-prob pass, micro-
+    batched loss (8 micro-batches of 8), profiler window, NVML sampler. Peak
+    allocated 54.7 GB with vLLM at 0.15.
+  - Early signals worth testing properly: step time is about 2.4 s; rollout is about
+    a third of it, not the majority; the GPU is busy only about 2% of the weight-sync
+    window (`results/smoke/vllm/rep0/profile_busy.json`).
+- **Budget projection** (`python -m rlstudy.budget results/smoke/vllm/rep0`, a
+  planning estimate): about 102 GPU-minutes for E0–E4 plus about 1 minute of process
+  start-up per run; longest single run about 4.5 minutes. Nothing near the 30-minute
+  flag. Submitting all five experiments.

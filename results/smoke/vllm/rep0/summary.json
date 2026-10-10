@@ -1,0 +1,186 @@
+{
+  "run_dir": "smoke/vllm/rep0",
+  "experiment": "smoke",
+  "config_hash": "70d8d21de28e8796",
+  "git_sha": "57aea3f55adcc5d936b0bdbdce91b07442386082",
+  "slurm_job": "13926413",
+  "gpu": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "status": "completed",
+  "steps_total": 8,
+  "steps_kept": 4,
+  "steps_profiled": 2,
+  "warmup_dropped": 2,
+  "step_time_mean_s": 2.4500504787499997,
+  "step_time_stdev_s": 0.054608596307146644,
+  "buckets": {
+    "rollout_gen": {
+      "mean_s_per_step": 0.84147438475,
+      "share": 0.34345185621616864
+    },
+    "reward": {
+      "mean_s_per_step": 0.000696951,
+      "share": 0.0002844639349453649
+    },
+    "advantage_loss": {
+      "mean_s_per_step": 1.3783241845,
+      "share": 0.5625697088507386
+    },
+    "optimizer_step": {
+      "mean_s_per_step": 0.01801823325,
+      "share": 0.007354229394976707
+    },
+    "weight_sync": {
+      "mean_s_per_step": 0.185201702,
+      "share": 0.0755909739845396
+    },
+    "other": {
+      "mean_s_per_step": 0.02633502324999981,
+      "share": 0.010748767618631179
+    }
+  },
+  "sub_buckets": {
+    "backward": {
+      "mean_s_per_step": 0.68308155075
+    },
+    "loss_forward": {
+      "mean_s_per_step": 0.32353524
+    },
+    "old_logprob": {
+      "mean_s_per_step": 0.313229822
+    }
+  },
+  "rollout_tokens_per_s": 12644.175738232416,
+  "rollout_completions_per_s": 76.05697946350945,
+  "completion_tokens_per_step": 10639.75,
+  "completion_len_mean": 166.24609375,
+  "truncated_frac_mean": 0.203125,
+  "zero_signal_group_frac_mean": 0.0,
+  "sync": {
+    "steps_with_sync": 4,
+    "mean_s_per_sync": 0.185201702
+  },
+  "reward": {
+    "window": 4,
+    "reward_first": 0.31562501192092896,
+    "reward_last": 0.39375000447034836,
+    "correct_first": 0.2734375,
+    "correct_last": 0.33984375
+  },
+  "nvml_util_by_span": {
+    "weight_sync": {
+      "mean_util_gpu_pct": 50.06666666666667,
+      "samples": 15
+    },
+    "rollout_gen": {
+      "mean_util_gpu_pct": 57.63076923076923,
+      "samples": 65
+    },
+    "old_logprob": {
+      "mean_util_gpu_pct": 80.625,
+      "samples": 24
+    },
+    "loss_forward": {
+      "mean_util_gpu_pct": 92.95652173913044,
+      "samples": 23
+    },
+    "backward": {
+      "mean_util_gpu_pct": 93.47368421052632,
+      "samples": 57
+    },
+    "advantage_loss": {
+      "mean_util_gpu_pct": 76.02116402116403,
+      "samples": 189
+    },
+    "optimizer_step": {
+      "mean_util_gpu_pct": 95.66666666666667,
+      "samples": 3
+    }
+  },
+  "profile_busy": {
+    "advantage_loss": {
+      "wall_s": 5.437680517999999,
+      "busy_s": 3.5511248981933594,
+      "busy_frac": 0.6530587603369309,
+      "count": 16,
+      "by_kind_s": {
+        "kernel": 3.5106652172851556,
+        "memcpy": 0.03544127819824218,
+        "memset": 0.006033244750976564
+      }
+    },
+    "weight_sync": {
+      "wall_s": 0.37559609400000005,
+      "busy_s": 0.007082891967773437,
+      "busy_frac": 0.018857735958706313,
+      "count": 2,
+      "by_kind_s": {
+        "kernel": 0.007082891967773437
+      }
+    },
+    "rollout_gen": {
+      "wall_s": 2.195067479,
+      "busy_s": 1.2425382847900392,
+      "busy_frac": 0.5660592654564308,
+      "count": 2,
+      "by_kind_s": {
+        "memcpy": 0.0075869541015625,
+        "kernel": 1.2354856740722657,
+        "memset": 0.0004804986572265625
+      }
+    },
+    "old_logprob": {
+      "wall_s": 0.647834378,
+      "busy_s": 0.5351236120605469,
+      "busy_frac": 0.826019165133819,
+      "count": 2,
+      "by_kind_s": {
+        "kernel": 0.5343185833740234,
+        "memcpy": 7.375830078125e-05,
+        "memset": 0.0007312703857421876
+      }
+    },
+    "reward": {
+      "wall_s": 0.00185395,
+      "busy_s": 2.76468505859375e-05,
+      "busy_frac": 0.014912403563169179,
+      "count": 2,
+      "by_kind_s": {
+        "kernel": 1.95838623046875e-05,
+        "memcpy": 8.06298828125e-06
+      }
+    },
+    "loss_forward": {
+      "wall_s": 0.736746676,
+      "busy_s": 0.5421349058837892,
+      "busy_frac": 0.7358498158786253,
+      "count": 16,
+      "by_kind_s": {
+        "kernel": 0.5409101892089844,
+        "memcpy": 0.0005405505371093751,
+        "memset": 0.0006841661376953124
+      }
+    },
+    "backward": {
+      "wall_s": 1.3598753519999998,
+      "busy_s": 1.2232221674804686,
+      "busy_frac": 0.8995105071074697,
+      "count": 16,
+      "by_kind_s": {
+        "kernel": 1.1920792705078125,
+        "memcpy": 0.027005587402343753,
+        "memset": 0.004137309570312499
+      }
+    },
+    "optimizer_step": {
+      "wall_s": 0.04521182,
+      "busy_s": 0.04088949438476562,
+      "busy_frac": 0.9043983273569969,
+      "count": 2,
+      "by_kind_s": {
+        "kernel": 0.04088949438476562
+      }
+    }
+  }
+}

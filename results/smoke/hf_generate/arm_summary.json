@@ -1,0 +1,297 @@
+{
+  "n_reps": 1,
+  "runs": [
+    "smoke/hf_generate/rep0"
+  ],
+  "slurm_jobs": [
+    "13926413"
+  ],
+  "gpus": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "config_hashes": [
+    "24d828bd5d623cef"
+  ],
+  "metrics": {
+    "buckets.advantage_loss.mean_s_per_step": {
+      "mean": 1.0554985005000002,
+      "stdev": null,
+      "min": 1.0554985005000002,
+      "max": 1.0554985005000002,
+      "n": 1
+    },
+    "buckets.advantage_loss.share": {
+      "mean": 0.14589112674233837,
+      "stdev": null,
+      "min": 0.14589112674233837,
+      "max": 0.14589112674233837,
+      "n": 1
+    },
+    "buckets.optimizer_step.mean_s_per_step": {
+      "mean": 0.017828734,
+      "stdev": null,
+      "min": 0.017828734,
+      "max": 0.017828734,
+      "n": 1
+    },
+    "buckets.optimizer_step.share": {
+      "mean": 0.002464289708054812,
+      "stdev": null,
+      "min": 0.002464289708054812,
+      "max": 0.002464289708054812,
+      "n": 1
+    },
+    "buckets.other.mean_s_per_step": {
+      "mean": 0.025732362000000286,
+      "stdev": null,
+      "min": 0.025732362000000286,
+      "max": 0.025732362000000286,
+      "n": 1
+    },
+    "buckets.other.share": {
+      "mean": 0.003556730098757514,
+      "stdev": null,
+      "min": 0.003556730098757514,
+      "max": 0.003556730098757514,
+      "n": 1
+    },
+    "buckets.reward.mean_s_per_step": {
+      "mean": 0.000536326,
+      "stdev": null,
+      "min": 0.000536326,
+      "max": 0.000536326,
+      "n": 1
+    },
+    "buckets.reward.share": {
+      "mean": 7.413104272923725e-05,
+      "stdev": null,
+      "min": 7.413104272923725e-05,
+      "max": 7.413104272923725e-05,
+      "n": 1
+    },
+    "buckets.rollout_gen.mean_s_per_step": {
+      "mean": 6.135240932,
+      "stdev": null,
+      "min": 6.135240932,
+      "max": 6.135240932,
+      "n": 1
+    },
+    "buckets.rollout_gen.share": {
+      "mean": 0.8480137224081201,
+      "stdev": null,
+      "min": 0.8480137224081201,
+      "max": 0.8480137224081201,
+      "n": 1
+    },
+    "buckets.weight_sync.mean_s_per_step": {
+      "mean": 0.0,
+      "stdev": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 1
+    },
+    "buckets.weight_sync.share": {
+      "mean": 0.0,
+      "stdev": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 1
+    },
+    "completion_len_mean": {
+      "mean": 165.4453125,
+      "stdev": null,
+      "min": 165.4453125,
+      "max": 165.4453125,
+      "n": 1
+    },
+    "completion_tokens_per_step": {
+      "mean": 10588.5,
+      "stdev": null,
+      "min": 10588.5,
+      "max": 10588.5,
+      "n": 1
+    },
+    "nvml_util_by_span.advantage_loss.mean_util_gpu_pct": {
+      "mean": 88.48780487804878,
+      "stdev": null,
+      "min": 88.48780487804878,
+      "max": 88.48780487804878,
+      "n": 1
+    },
+    "nvml_util_by_span.advantage_loss.samples": {
+      "mean": 287.0,
+      "stdev": null,
+      "min": 287.0,
+      "max": 287.0,
+      "n": 1
+    },
+    "nvml_util_by_span.backward.mean_util_gpu_pct": {
+      "mean": 95.04,
+      "stdev": null,
+      "min": 95.04,
+      "max": 95.04,
+      "n": 1
+    },
+    "nvml_util_by_span.backward.samples": {
+      "mean": 25.0,
+      "stdev": null,
+      "min": 25.0,
+      "max": 25.0,
+      "n": 1
+    },
+    "nvml_util_by_span.loss_forward.mean_util_gpu_pct": {
+      "mean": 94.75,
+      "stdev": null,
+      "min": 94.75,
+      "max": 94.75,
+      "n": 1
+    },
+    "nvml_util_by_span.loss_forward.samples": {
+      "mean": 16.0,
+      "stdev": null,
+      "min": 16.0,
+      "max": 16.0,
+      "n": 1
+    },
+    "nvml_util_by_span.rollout_gen.mean_util_gpu_pct": {
+      "mean": 87.38367346938776,
+      "stdev": null,
+      "min": 87.38367346938776,
+      "max": 87.38367346938776,
+      "n": 1
+    },
+    "nvml_util_by_span.rollout_gen.samples": {
+      "mean": 245.0,
+      "stdev": null,
+      "min": 245.0,
+      "max": 245.0,
+      "n": 1
+    },
+    "reward.correct_first": {
+      "mean": 0.2265625,
+      "stdev": null,
+      "min": 0.2265625,
+      "max": 0.2265625,
+      "n": 1
+    },
+    "reward.correct_last": {
+      "mean": 0.296875,
+      "stdev": null,
+      "min": 0.296875,
+      "max": 0.296875,
+      "n": 1
+    },
+    "reward.reward_first": {
+      "mean": 0.26484375447034836,
+      "stdev": null,
+      "min": 0.26484375447034836,
+      "max": 0.26484375447034836,
+      "n": 1
+    },
+    "reward.reward_last": {
+      "mean": 0.3421875238418579,
+      "stdev": null,
+      "min": 0.3421875238418579,
+      "max": 0.3421875238418579,
+      "n": 1
+    },
+    "reward.window": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "rollout_completions_per_s": {
+      "mean": 10.43153817581813,
+      "stdev": null,
+      "min": 10.43153817581813,
+      "max": 10.43153817581813,
+      "n": 1
+    },
+    "rollout_tokens_per_s": {
+      "mean": 1725.8490933539103,
+      "stdev": null,
+      "min": 1725.8490933539103,
+      "max": 1725.8490933539103,
+      "n": 1
+    },
+    "step_time_mean_s": {
+      "mean": 7.2348368545,
+      "stdev": null,
+      "min": 7.2348368545,
+      "max": 7.2348368545,
+      "n": 1
+    },
+    "step_time_stdev_s": {
+      "mean": 0.03686947458805655,
+      "stdev": null,
+      "min": 0.03686947458805655,
+      "max": 0.03686947458805655,
+      "n": 1
+    },
+    "steps_kept": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "steps_profiled": {
+      "mean": 0.0,
+      "stdev": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 1
+    },
+    "steps_total": {
+      "mean": 4.0,
+      "stdev": null,
+      "min": 4.0,
+      "max": 4.0,
+      "n": 1
+    },
+    "sub_buckets.backward.mean_s_per_step": {
+      "mean": 0.6800171530000001,
+      "stdev": null,
+      "min": 0.6800171530000001,
+      "max": 0.6800171530000001,
+      "n": 1
+    },
+    "sub_buckets.loss_forward.mean_s_per_step": {
+      "mean": 0.32913748200000004,
+      "stdev": null,
+      "min": 0.32913748200000004,
+      "max": 0.32913748200000004,
+      "n": 1
+    },
+    "sync.steps_with_sync": {
+      "mean": 0.0,
+      "stdev": null,
+      "min": 0.0,
+      "max": 0.0,
+      "n": 1
+    },
+    "truncated_frac_mean": {
+      "mean": 0.2421875,
+      "stdev": null,
+      "min": 0.2421875,
+      "max": 0.2421875,
+      "n": 1
+    },
+    "warmup_dropped": {
+      "mean": 2.0,
+      "stdev": null,
+      "min": 2.0,
+      "max": 2.0,
+      "n": 1
+    },
+    "zero_signal_group_frac_mean": {
+      "mean": 0.125,
+      "stdev": null,
+      "min": 0.125,
+      "max": 0.125,
+      "n": 1
+    }
+  }
+}

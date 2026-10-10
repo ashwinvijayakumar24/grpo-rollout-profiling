@@ -1,0 +1,86 @@
+{
+  "run_dir": "smoke/hf_generate/rep0",
+  "experiment": "smoke",
+  "config_hash": "24d828bd5d623cef",
+  "git_sha": "57aea3f55adcc5d936b0bdbdce91b07442386082",
+  "slurm_job": "13926413",
+  "gpu": [
+    "NVIDIA H100 80GB HBM3"
+  ],
+  "status": "completed",
+  "steps_total": 4,
+  "steps_kept": 2,
+  "steps_profiled": 0,
+  "warmup_dropped": 2,
+  "step_time_mean_s": 7.2348368545,
+  "step_time_stdev_s": 0.03686947458805655,
+  "buckets": {
+    "rollout_gen": {
+      "mean_s_per_step": 6.135240932,
+      "share": 0.8480137224081201
+    },
+    "reward": {
+      "mean_s_per_step": 0.000536326,
+      "share": 7.413104272923725e-05
+    },
+    "advantage_loss": {
+      "mean_s_per_step": 1.0554985005000002,
+      "share": 0.14589112674233837
+    },
+    "optimizer_step": {
+      "mean_s_per_step": 0.017828734,
+      "share": 0.002464289708054812
+    },
+    "weight_sync": {
+      "mean_s_per_step": 0.0,
+      "share": 0.0
+    },
+    "other": {
+      "mean_s_per_step": 0.025732362000000286,
+      "share": 0.003556730098757514
+    }
+  },
+  "sub_buckets": {
+    "backward": {
+      "mean_s_per_step": 0.6800171530000001
+    },
+    "loss_forward": {
+      "mean_s_per_step": 0.32913748200000004
+    }
+  },
+  "rollout_tokens_per_s": 1725.8490933539103,
+  "rollout_completions_per_s": 10.43153817581813,
+  "completion_tokens_per_step": 10588.5,
+  "completion_len_mean": 165.4453125,
+  "truncated_frac_mean": 0.2421875,
+  "zero_signal_group_frac_mean": 0.125,
+  "sync": {
+    "steps_with_sync": 0,
+    "mean_s_per_sync": null
+  },
+  "reward": {
+    "window": 2,
+    "reward_first": 0.26484375447034836,
+    "reward_last": 0.3421875238418579,
+    "correct_first": 0.2265625,
+    "correct_last": 0.296875
+  },
+  "nvml_util_by_span": {
+    "rollout_gen": {
+      "mean_util_gpu_pct": 87.38367346938776,
+      "samples": 245
+    },
+    "loss_forward": {
+      "mean_util_gpu_pct": 94.75,
+      "samples": 16
+    },
+    "backward": {
+      "mean_util_gpu_pct": 95.04,
+      "samples": 25
+    },
+    "advantage_loss": {
+      "mean_util_gpu_pct": 88.48780487804878,
+      "samples": 287
+    }
+  }
+}
