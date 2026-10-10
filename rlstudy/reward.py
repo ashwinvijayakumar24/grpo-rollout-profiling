@@ -77,6 +77,26 @@ def is_correct(completion: str, gold: Decimal | str) -> bool:
     return predicted is not None and gold is not None and predicted == gold
 
 
+_ANY_NUMBER_RE = re.compile(_NUMBER)
+
+
+def extract_last_number(completion: str) -> Decimal | None:
+    """The last number anywhere in the text, ignoring the #### format.
+
+    Used only for the lenient held-out metric, which separates "got the math right"
+    from "also wrote it in the required format".
+    """
+    matches = _ANY_NUMBER_RE.findall(completion)
+    return normalize_number(matches[-1]) if matches else None
+
+
+def is_correct_lenient(completion: str, gold: Decimal | str) -> bool:
+    if isinstance(gold, str):
+        gold = normalize_number(gold)
+    predicted = extract_last_number(completion)
+    return predicted is not None and gold is not None and predicted == gold
+
+
 def has_valid_format(completion: str) -> bool:
     return _FORMAT_RE.search(completion) is not None
 

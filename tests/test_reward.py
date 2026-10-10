@@ -110,3 +110,18 @@ def test_trl_signature_chat_messages():
 def test_mismatched_lengths_raise():
     with pytest.raises(ValueError):
         correctness_reward(["q"], ["#### 1", "#### 2"], answer=["1"])
+
+
+@pytest.mark.parametrize(
+    "completion, gold, ok",
+    [
+        ("so the answer is 72.", "72", True),       # right number, wrong format
+        ("#### 72", "72", True),
+        ("48 + 24 = 72, then 72 - 2 = 70", "72", False),  # last number counts
+        ("no numbers here", "72", False),
+    ],
+)
+def test_lenient_correctness(completion, gold, ok):
+    from rlstudy.reward import is_correct_lenient
+
+    assert is_correct_lenient(completion, gold) is ok

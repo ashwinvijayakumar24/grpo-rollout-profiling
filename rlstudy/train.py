@@ -42,6 +42,7 @@ DEFAULTS: dict = {
         "sleep_mode": False,          # must stay off for sync_every > 1 (NOTES.md)
         "sync_every": 1,
     },
+    "save_final_to": None,            # directory to save the trained model (bf16) for held-out eval
     "timing": {
         "enabled": True,
         "record_events": True,        # per-span start/end, to line up with GPU samples
@@ -195,6 +196,11 @@ def run(config: dict, out_dir: Path) -> Path:
         t1 = time.perf_counter()
         trainer.train()
         status = "completed"
+        if config.get("save_final_to"):
+            # bf16 halves the size; vLLM serves the model in bf16 anyway.
+            model = trainer.model.to(torch.bfloat16)
+            model.save_pretrained(config["save_final_to"])
+            trainer.processing_class.save_pretrained(config["save_final_to"])
     finally:
         if sampler is not None:
             sampler.stop()
