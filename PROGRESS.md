@@ -155,3 +155,14 @@ Newest entries at the bottom. Rules:
   `results/E0_overhead/overhead.json`): full instrumentation 2.271 ± 0.010 s/step vs
   step-boundary-only 2.262 ± 0.012 s/step, **+0.40 %** mean paired difference
   (0.59 %, 0.29 %, 0.32 % per seed). Both arms generated identical tokens per seed.
+- **E4 results** (job 13930289, git `c7605be`, 3 reps × 64 steps per arm plus two
+  profiled runs; `results/E4_sync_freq/`): one sync costs 0.179–0.185 s regardless of
+  interval; step time 2.287 ± 0.016 s (k=1), 2.159 ± 0.013 s (k=4), 2.113 ± 0.009 s
+  (k=16), a 7.6 % saving; GPU busy 1.9 % during sync in both profiled arms. Training
+  correctness, last 10 steps: 0.654 ± 0.029 (k=1), 0.642 ± 0.039 (k=4),
+  0.590 ± 0.075 (k=16): suggestive of a staleness cost, not settled at 3 reps.
+- **Housekeeping note:** a `git stash -u` on PACE (to let the checkout pull) moved
+  untracked result folders into `stash@{0}` there. Every completed run had already
+  been copied to the Mac and committed; the stash stays on PACE as a backup.
+- **E5 submitted** (job 13931904): vLLM vs HF generate, 3 reps each. E1–E4 completed
+  cleanly, which was the precondition for the stretch.
