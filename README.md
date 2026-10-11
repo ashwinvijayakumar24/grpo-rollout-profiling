@@ -1,4 +1,4 @@
-# Where Does GRPO Training Time Go? Profiling the Rollout Path of LLM Reinforcement Learning
+# Profiling the Rollout Path of LLM Reinforcement Learning
 
 An infrastructure study of reinforcement-learning post-training for LLMs. It runs a working GRPO loop (Group Relative Policy Optimization: sample several answers per question, score each with a verifiable reward, and push the model toward the above-average ones) on GSM8K math with Qwen2.5-1.5B-Instruct, using TRL's trainer with a vLLM sampler on the same GPU. It then attributes **every training step's wall-clock time** to rollout generation, reward, loss and backward, the optimizer, and the trainer→sampler weight sync, and explains each number mechanistically.
 
