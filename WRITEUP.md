@@ -35,7 +35,7 @@ format, and format-agnostic accuracy rose a modest 5 points (66 % → 71 %).
 | Item | Value | Source |
 |---|---|---|
 | GPU / driver / CUDA | NVIDIA H100 80GB HBM3, driver 615.71.09, torch 2.13.0+cu129 | `results/E1_breakdown/baseline/rep0/run.json` → `env` |
-| Model | Qwen2.5-1.5B-Instruct, full fine-tune, bf16 | `configs/baseline.yaml` |
+| Model | Qwen2.5-1.5B-Instruct, full fine-tune, bf16 mixed precision | `configs/baseline.yaml` |
 | Framework | TRL 1.14.2 `GRPOTrainer`, vLLM 0.30.0 colocated on the same GPU | DECISIONS.md |
 | Task | GSM8K, 1,000 frozen training problems (seed 0) | `data/gsm8k_subset/manifest.json` |
 | Reward | exact match on the number after `####` (1.0), plus 0.1 for the `#### <n>` format | `rlstudy/reward.py` |
