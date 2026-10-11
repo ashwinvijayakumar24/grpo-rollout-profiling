@@ -49,7 +49,9 @@ sequence in one process: copy the latest weights into vLLM (weight sync), genera
 64 answers (rollout), score them (reward), run a no-grad forward pass to get the
 trainer's own log-probabilities for the sampled tokens (old log-probs, used to
 correct for vLLM/trainer numeric differences), compute group-relative advantages and
-the loss, backpropagate, and step the optimizer.
+the loss, backpropagate, and step the optimizer. The code path is TRL's
+[`GRPOTrainer`](https://github.com/huggingface/trl/blob/a01dc41fb1f09d56d8709c3ea2a2868f8c035560/trl/trainer/grpo_trainer.py) and
+[`VLLMGeneration`](https://github.com/huggingface/trl/blob/a01dc41fb1f09d56d8709c3ea2a2868f8c035560/trl/generation/vllm_generation.py) (TRL v1.14.2).
 
 **How time is attributed.** `rlstudy/timing.py` charges every nanosecond of a step
 to exactly one bucket:
@@ -269,7 +271,8 @@ statistically settled at 3 reps).**
 Source: `results/E4_sync_freq/{sync1,sync4,sync16}/arm_summary.json` (job 13930289,
 arms interleaved on one GPU, 3 reps × 64 steps each); GPU busy fractions from
 `results/E4_sync_freq/{sync1,sync16}_profiled/rep0/profile_busy.json` (steps 32–33,
-a sync step for both schedules). vLLM sleep mode was off in every arm.
+a sync step for both schedules). vLLM sleep mode was off in every arm: with it on, TRL re-pushes the weights before
+every generation regardless of schedule ([`vllm_generation.py#L586-L590`](https://github.com/huggingface/trl/blob/a01dc41fb1f09d56d8709c3ea2a2868f8c035560/trl/generation/vllm_generation.py#L586-L590)).
 
 ![E4 sync per step](results/figures/E4_sync_per_step.png)
 

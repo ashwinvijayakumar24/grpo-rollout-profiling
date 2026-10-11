@@ -1,7 +1,14 @@
 # Decisions
 
 Status: Phase 0 decision, 2026-10-08. Waiting for Ashwin's sign-off before building
-(PLAN.md checkpoint). Source links point at pinned commits of each project.
+(PLAN.md checkpoint). Source links point at these pinned commits:
+
+| Project | Version | Commit |
+|---|---|---|
+| TRL | v1.14.2 | `a01dc41fb1f09d56d8709c3ea2a2868f8c035560` |
+| veRL | v0.9.1 | `1876b06d0a3e4e71e06230be10af14492ca8a75b` |
+| OpenRLHF | v0.11.2 | `17fd4a79cc87dfb2f6185ffac634066525bcd917` |
+| transformers | v5.17.0 | tag `v5.17.0` |
 
 ## Decision: TRL `GRPOTrainer` + vLLM in colocate mode
 
@@ -202,7 +209,8 @@ its transformers pin is exact.
 2. **Memory on one GPU for a full fine-tune.** The trainer (about 24 GB of weights
    and AdamW state for 1.5B, an estimate) plus vLLM's 0.3 share has to fit. It should
    fit on an 80 GB H100. On a 40 GB A100, use LoRA or Llama-3.2-1B. Sleep mode would
-   save memory, but it forces a sync every generation and breaks E4.
+   save memory, but it forces a sync every generation and breaks E4
+   ([`vllm_generation.py#L586-L590`](https://github.com/huggingface/trl/blob/a01dc41fb1f09d56d8709c3ea2a2868f8c035560/trl/generation/vllm_generation.py#L586-L590)).
 3. **Changing the sync schedule changes the algorithm.** Syncing every k > 1 steps
    means vLLM samples from stale weights. TRL's importance-sampling correction (on by
    default) partly compensates for this. E4 must report reward next to time, so that

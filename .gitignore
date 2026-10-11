@@ -11,3 +11,6 @@ scratch/
 profile_trace.json.gz
 hf_trainer/
 results/**/*.log
+
+# Private docs: kept locally, never committed
+private/
