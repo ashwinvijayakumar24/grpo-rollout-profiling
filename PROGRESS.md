@@ -193,3 +193,12 @@ Newest entries at the bottom. Rules:
   after a full epoch: positive in 3/3 seeds, significant alone in 1/3 (p = 0.03, 0.19,
   0.43). Conclusion: the training mostly taught the answer format; the math gain is
   modest.
+
+## 2026-10-11
+
+- **History rewrite** (git filter-repo): removed private docs (resume and learning
+  notes) and the interview-prep section from every past commit. Commit dates and all
+  other file contents are unchanged; 2 commits that only touched private docs became
+  empty and were dropped (77 → 75). Every commit ID changed, so result files and this
+  log still cite the old IDs; `results/env/commit_map.txt` maps each old ID to its new
+  one. Pre-rewrite history is kept in a local backup bundle, not on GitHub.
